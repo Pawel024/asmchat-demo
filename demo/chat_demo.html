@@ -87,21 +87,6 @@
             } else {
               found = false;
             }
-
-            // Ensure that only user inputs are processed
-            if (!found) {
-              miss(chatObject.input);
-            }
-          },
-
-          responseCallbackFn: function (chatObject, key) {
-            var xhr = new XMLHttpRequest();
-            var url = base_url + "/chat";
-
-            var input = key;
-            var request_body = {
-              input: input,
-            };
           },
         }
       );

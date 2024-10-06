@@ -14,7 +14,7 @@ from parse import parse_pdf
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-llm = OpenAI(model="gpt-4o")
+llm = OpenAI(model="gpt-4o-mini")
 
 Settings.llm = llm
 input_files = ['data_unparsed/Aerodynamics_and_Aircraft_Performance_3e.pdf']
@@ -40,7 +40,8 @@ def read_data():
         "{context_str}"
         "\nInstruction: Use the previous chat history, or the context above, to interact and help the user."
         " Put all equations in TeX format. If you can't provide a confident answer, say 'Sorry, I don't know that' instead."
-        " Never say something you are not confident about. Never lie. Never be rude."
+        " If a question is not directly related to the context, say 'Sorry, I can't help with that."
+        " Never say something you are not absolutely confident about. Never lie. Never be rude."
     ))
     return chat_engine
 
