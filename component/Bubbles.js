@@ -77,7 +77,7 @@ function Bubbles(container, self, options) {
     var inputWrap = document.createElement("div");
     inputWrap.className = "input-wrap";
     var inputText = document.createElement("textarea");
-    inputText.setAttribute("placeholder", "Ask me anything...");
+    inputText.setAttribute("placeholder", "Ask me anything about aircraft performance or aerodynamics...");
     inputWrap.appendChild(inputText);
     inputText.addEventListener("keypress", (e) => {
       // register user input
@@ -185,35 +185,22 @@ function Bubbles(container, self, options) {
     var func = (key, content) => {
       typeof window[key] === "function" ? window[key](content) : false;
     };
-  
-    // Send user input to the Flask server
-    fetch('http://localhost:5000/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ input: content })
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the Flask server
-        if (data.content) {
-          structured_content = {says: data.content};
-          this.reply(structured_content);
-          standingAnswer = key;
-  
-          // Add re-generated user picks to the history stack
-          if (content !== undefined) {
-            interactionsSave(
-              '<span class="bubble-button reply-pick">' + content + "</span>",
-              "reply reply-pick"
-            );
-          }
-        } else {
-          func(key, content);
-        }
-      })
-      .catch(error => console.error('Error:', error));
+    
+    if (content) {
+      structured_content = {says: content};
+      this.reply(structured_content);
+      standingAnswer = key;
+
+      // Add re-generated user picks to the history stack
+      if (content !== undefined) {
+        interactionsSave(
+          '<span class="bubble-button reply-pick">' + content + "</span>",
+          "reply reply-pick"
+        );
+      }
+    } else {
+      func(key, content);
+    }
   };
   
   // api for typing bubble
@@ -223,31 +210,13 @@ function Bubbles(container, self, options) {
       bubbleTyping.classList.add("imagine");
     };
   };
-  
-  // "type" each message within the group
-  var orderBubbles = (q, callback) => {
-    var start = () => {
-      setTimeout(() => {
-        callback();
-      }, animationTime);
-    };
-    var position = 0;
-    if (typeof q === "string") { // Ensure q is a string
-      start = () => {
-        addBubble(q, callback);
-      };
-    } else {
-      console.error('Error: q is not a string', q);
-    }
-    start();
-  };
 
   function ensureKaTeXLoaded(callback) {
     if (typeof renderMathInElement !== 'undefined') {
       callback();
     } else {
-      console.error("KaTeX is not loaded properly. Retrying...");
-      setTimeout(() => ensureKaTeXLoaded(callback), 100);
+      console.log("KaTeX not yet loaded. Retrying...");
+      setTimeout(() => ensureKaTeXLoaded(callback), 20);
     }
   }
 
