@@ -242,88 +242,101 @@ function Bubbles(container, self, options) {
     start();
   };
 
+  function ensureKaTeXLoaded(callback) {
+    if (typeof renderMathInElement !== 'undefined') {
+      callback();
+    } else {
+      console.error("KaTeX is not loaded properly. Retrying...");
+      setTimeout(() => ensureKaTeXLoaded(callback), 100);
+    }
+  }
+
   // create a bubble
-  var bubbleQueue = false
+  var bubbleQueue = false;
   var addBubble = function(say, posted, reply, live) {
-    reply = typeof reply !== "undefined" ? reply : ""
-    live = typeof live !== "undefined" ? live : true // bubbles that are not "live" are not animated and displayed differently
-    var animationTime = live ? this.animationTime : 0
-    var typeSpeed = live ? this.typeSpeed : 0
+    reply = typeof reply !== "undefined" ? reply : "";
+    live = typeof live !== "undefined" ? live : true; // bubbles that are not "live" are not animated and displayed differently
+    var animationTime = live ? this.animationTime : 0;
+    var typeSpeed = live ? this.typeSpeed : 0;
     // create bubble element
-    var bubble = document.createElement("div")
-    var bubbleContent = document.createElement("span")
-    bubble.className = "bubble imagine " + (!live ? " history " : "") + reply
-    bubbleContent.className = "bubble-content"
-    bubbleContent.innerHTML = say
-    bubble.appendChild(bubbleContent)
-    bubbleWrap.insertBefore(bubble, bubbleTyping)
+    var bubble = document.createElement("div");
+    var bubbleContent = document.createElement("span");
+    bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
+    bubbleContent.className = "bubble-content";
+    bubbleContent.innerHTML = say;
+    bubble.appendChild(bubbleContent);
+    bubbleWrap.insertBefore(bubble, bubbleTyping);
+
+    // Render LaTeX equations using KaTeX
+    ensureKaTeXLoaded(() => renderMathInElement(bubbleContent));
+
     // answer picker styles
     if (reply !== "") {
-      var bubbleButtons = bubbleContent.querySelectorAll(".bubble-button")
+      var bubbleButtons = bubbleContent.querySelectorAll(".bubble-button");
       for (var z = 0; z < bubbleButtons.length; z++) {
-        ;(function(el) {
+        (function(el) {
           if (!el.parentNode.parentNode.classList.contains("reply-freeform"))
-            el.style.width = el.offsetWidth - sidePadding * 2 + widerBy + "px"
-        })(bubbleButtons[z])
+            el.style.width = el.offsetWidth - sidePadding * 2 + widerBy + "px";
+        })(bubbleButtons[z]);
       }
       bubble.addEventListener("click", function(e) {
         if (e.target.classList.contains('bubble-button')) {
           for (var i = 0; i < bubbleButtons.length; i++) {
-            ;(function(el) {
-              el.style.width = 0 + "px"
-              el.classList.contains("bubble-pick") ? (el.style.width = "") : false
-              el.removeAttribute("onclick")
-            })(bubbleButtons[i])
+            (function(el) {
+              el.style.width = 0 + "px";
+              el.classList.contains("bubble-pick") ? (el.style.width = "") : false;
+              el.removeAttribute("onclick");
+            })(bubbleButtons[i]);
           }
-          this.classList.add("bubble-picked")
+          this.classList.add("bubble-picked");
         }
-      })
+      });
     }
     // time, size & animate
-    wait = live ? animationTime * 2 : 0
-    minTypingWait = live ? animationTime * 6 : 0
+    wait = live ? animationTime * 2 : 0;
+    minTypingWait = live ? animationTime * 6 : 0;
     if (say.length * typeSpeed > animationTime && reply == "") {
-      wait += typeSpeed * say.length
-      wait < minTypingWait ? (wait = minTypingWait) : false
+      wait += typeSpeed * say.length;
+      wait < minTypingWait ? (wait = minTypingWait) : false;
       setTimeout(function() {
-        bubbleTyping.classList.remove("imagine")
-      }, animationTime)
+        bubbleTyping.classList.remove("imagine");
+      }, animationTime);
     }
     live && setTimeout(function() {
-      bubbleTyping.classList.add("imagine")
-    }, wait - animationTime * 2)
+      bubbleTyping.classList.add("imagine");
+    }, wait - animationTime * 2);
     bubbleQueue = setTimeout(function() {
-      bubble.classList.remove("imagine")
-      var bubbleWidthCalc = bubbleContent.offsetWidth + widerBy + "px"
-      bubble.style.width = reply == "" ? bubbleWidthCalc : ""
+      bubble.classList.remove("imagine");
+      var bubbleWidthCalc = bubbleContent.offsetWidth + widerBy + "px";
+      bubble.style.width = reply == "" ? bubbleWidthCalc : "";
       bubble.style.width = say.includes("<img src=")
         ? "50%"
-        : bubble.style.width
-      bubble.classList.add("say")
-      posted()
+        : bubble.style.width;
+      bubble.classList.add("say");
+      posted();
 
       // save the interaction
-      interactionsSave(say, reply)
-      !iceBreaker && interactionsSaveCommit() // save point
+      interactionsSave(say, reply);
+      !iceBreaker && interactionsSaveCommit(); // save point
 
       // animate scrolling
-      containerHeight = container.offsetHeight
-      scrollDifference = bubbleWrap.scrollHeight - bubbleWrap.scrollTop
-      scrollHop = scrollDifference / 200
+      containerHeight = container.offsetHeight;
+      scrollDifference = bubbleWrap.scrollHeight - bubbleWrap.scrollTop;
+      scrollHop = scrollDifference / 200;
       var scrollBubbles = function() {
         for (var i = 1; i <= scrollDifference / scrollHop; i++) {
-          ;(function() {
+          (function() {
             setTimeout(function() {
               bubbleWrap.scrollHeight - bubbleWrap.scrollTop > containerHeight
                 ? (bubbleWrap.scrollTop = bubbleWrap.scrollTop + scrollHop)
-                : false
-            }, i * 5)
-          })()
+                : false;
+            }, i * 5);
+          })();
         }
-      }
-      setTimeout(scrollBubbles, animationTime / 2)
-    }, wait + animationTime * 2)
-  }
+      };
+      setTimeout(scrollBubbles, animationTime / 2);
+    }, wait + animationTime * 2);
+  };
 
   // recall previous interactions
   for (var i = 0; i < interactionsHistory.length; i++) {
