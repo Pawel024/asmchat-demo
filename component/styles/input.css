@@ -1,7 +1,7 @@
 /* style user input field */
 .bubble-container .input-wrap {
 	position: absolute;
-	bottom: 0;
+	bottom: 10px;
 	left: 0;
 	right: 0;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
@@ -27,7 +27,8 @@
 	margin: 0;
 }
 .bubble.reply.reply-freeform.say .bubble-content .bubble-button {
-	margin-top: 1px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	text-align: left;
 }
 .bubble.reply.say.bubble-hidden {

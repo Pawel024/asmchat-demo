@@ -1,2 +1,6 @@
 # Ignore tunneling tool
 /ngrok
+*.pdf
+*.json
+*.pyc
+.env

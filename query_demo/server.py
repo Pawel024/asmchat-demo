@@ -8,7 +8,8 @@ from llama_index.core import (
 from llama_index.llms.openai import OpenAI
 from llama_index.core import Settings
 from parse import parse_pdf
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 llm = OpenAI(model="gpt-4o")
 
@@ -27,5 +28,24 @@ def read_data():
 
 
     # make a chat engine
-    chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+    chat_engine = index.as_query_engine(chat_mode="condense_question", verbose=True)
     return chat_engine
+
+app = Flask(__name__)
+CORS(app)
+
+chat_engine = read_data()
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_input = data.get('input')
+    
+    # Process the input using your LlamaIndex chat engine
+    response = str(chat_engine.query(user_input))
+    
+    # Return the response in JSON format
+    return jsonify({'key': 'response_key', 'content': response})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

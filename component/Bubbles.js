@@ -74,73 +74,83 @@ function Bubbles(container, self, options) {
 
   // install user input textfield
   this.typeInput = function(callbackFn) {
-    var inputWrap = document.createElement("div")
-    inputWrap.className = "input-wrap"
-    var inputText = document.createElement("textarea")
-    inputText.setAttribute("placeholder", "Ask me anything...")
-    inputWrap.appendChild(inputText)
-    inputText.addEventListener("keypress", function(e) {
+    var inputWrap = document.createElement("div");
+    inputWrap.className = "input-wrap";
+    var inputText = document.createElement("textarea");
+    inputText.setAttribute("placeholder", "Ask me anything...");
+    inputWrap.appendChild(inputText);
+    inputText.addEventListener("keypress", (e) => {
       // register user input
       if (e.keyCode == 13) {
-        e.preventDefault()
-        typeof bubbleQueue !== false ? clearTimeout(bubbleQueue) : false // allow user to interrupt the bot
-        var lastBubble = document.querySelectorAll(".bubble.say")
-        lastBubble = lastBubble[lastBubble.length - 1]
+        e.preventDefault();
+        typeof bubbleQueue !== false ? clearTimeout(bubbleQueue) : false; // allow user to interrupt the bot
+        var lastBubble = document.querySelectorAll(".bubble.say");
+        lastBubble = lastBubble[lastBubble.length - 1];
         lastBubble.classList.contains("reply") &&
         !lastBubble.classList.contains("reply-freeform")
           ? lastBubble.classList.add("bubble-hidden")
-          : false
+          : false;
         addBubble(
-          '<span class="bubble-button bubble-pick">' + this.value + "</span>",
-          function() {},
+          '<span class="bubble-button bubble-pick">' + inputText.value + "</span>",
+          () => {},
           "reply reply-freeform"
-        )
-        // callback
-        typeof callbackFn === "function"
-          ? callbackFn({
-              input: this.value,
-              convo: _convo,
-              standingAnswer: standingAnswer
-            })
-          : false
-        this.value = ""
+        );
+        // Send user input to chatbot engine
+        fetch('http://localhost:5000/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ input: inputText.value })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Pass the response to the answer method
+          this.answer(data.key, data.content);
+        })
+        .catch(error => console.error('Error:', error));
+        inputText.value = "";
       }
-    })
-    container.appendChild(inputWrap)
-    bubbleWrap.style.paddingBottom = "100px"
-    inputText.focus()
-  }
-  inputCallbackFn ? this.typeInput(inputCallbackFn) : false
-
+    });
+    container.appendChild(inputWrap);
+    bubbleWrap.style.paddingBottom = "100px";
+    inputText.focus();
+  };
+  inputCallbackFn ? this.typeInput(inputCallbackFn) : false;
+  
   // init typing bubble
-  var bubbleTyping = document.createElement("div")
-  bubbleTyping.className = "bubble-typing imagine"
+  var bubbleTyping = document.createElement("div");
+  bubbleTyping.className = "bubble-typing imagine";
   for (dots = 0; dots < 3; dots++) {
-    var dot = document.createElement("div")
-    dot.className = "dot_" + dots + " dot"
-    bubbleTyping.appendChild(dot)
+    var dot = document.createElement("div");
+    dot.className = "dot_" + dots + " dot";
+    bubbleTyping.appendChild(dot);
   }
-  bubbleWrap.appendChild(bubbleTyping)
-
+  bubbleWrap.appendChild(bubbleTyping);
+  
   // accept JSON & create bubbles
-  this.talk = function(convo, here) {
+  this.talk = (convo, here) => {
     // all further .talk() calls will append the conversation with additional blocks defined in convo parameter
-    _convo = Object.assign(_convo, convo) // POLYFILL REQUIRED FOR OLDER BROWSERS
-
-    this.reply(_convo[here])
-    here ? (standingAnswer = here) : false
-  }
-
-  var iceBreaker = false // this variable holds answer to whether this is the initative bot interaction or not
-  this.reply = function(turn) {
-    iceBreaker = typeof turn === "undefined"
-    turn = !iceBreaker ? turn : _convo.ice
-    questionsHTML = ""
-    if (!turn) return
+    _convo = Object.assign(_convo, convo); // POLYFILL REQUIRED FOR OLDER BROWSERS
+  
+    console.log('convo:', _convo); // Debugging statement to inspect convo object
+  
+    this.reply(_convo[here]);
+    here ? (standingAnswer = here) : false;
+  };
+  
+  this.reply = (turn) => {
+    iceBreaker = typeof turn === "undefined";
+    turn = !iceBreaker ? turn : _convo.ice;
+    questionsHTML = "";
+    if (!turn) return;
+  
+    console.log('turn:', turn); // Debugging statement to inspect turn object
+  
     if (turn.reply !== undefined) {
-      turn.reply.reverse()
+      turn.reply.reverse();
       for (var i = 0; i < turn.reply.length; i++) {
-        ;(function(el, count) {
+        (function (el, count) {
           questionsHTML +=
             '<span class="bubble-button" style="animation-delay: ' +
             animationTime / 2 * count +
@@ -152,64 +162,85 @@ function Bubbles(container, self, options) {
             el.question +
             "');this.classList.add('bubble-pick')\">" +
             el.question +
-            "</span>"
-        })(turn.reply[i], i)
+            "</span>";
+        })(turn.reply[i], i);
       }
     }
-    orderBubbles(turn.says, function() {
-      bubbleTyping.classList.remove("imagine")
-      questionsHTML !== ""
-        ? addBubble(questionsHTML, function() {}, "reply")
-        : bubbleTyping.classList.add("imagine")
-    })
-  }
+  
+    // Ensure turn.says is a single string
+    if (typeof turn.says === "string") {
+      addBubble(turn.says, () => {
+        bubbleTyping.classList.remove("imagine");
+        questionsHTML !== ""
+          ? addBubble(questionsHTML, () => {}, "reply")
+          : bubbleTyping.classList.add("imagine");
+      });
+    } else {
+      console.error("Error: turn.says is not a string", turn.says);
+    }
+  };
+  
   // navigate "answers"
-  this.answer = function(key, content) {
-    var func = function(key, content) {
-      typeof window[key] === "function" ? window[key](content) : false
-    }
-    _convo[key] !== undefined
-      ? (this.reply(_convo[key]), (standingAnswer = key))
-      : (typeof responseCallbackFn === 'function' ? responseCallbackFn({input: key,convo: _convo,standingAnswer: standingAnswer}, key) : func(key, content))
-
-    // add re-generated user picks to the history stack
-    if (_convo[key] !== undefined && content !== undefined) {
-      interactionsSave(
-        '<span class="bubble-button reply-pick">' + content + "</span>",
-        "reply reply-pick"
-      )
-    }
-  }
-
-  // api for typing bubble
-  this.think = function() {
-    bubbleTyping.classList.remove("imagine")
-    this.stop = function() {
-      bubbleTyping.classList.add("imagine")
-    }
-  }
-
-  // "type" each message within the group
-  var orderBubbles = function(q, callback) {
-    var start = function() {
-      setTimeout(function() {
-        callback()
-      }, animationTime)
-    }
-    var position = 0
-    for (
-      var nextCallback = position + q.length - 1;
-      nextCallback >= position;
-      nextCallback--
-    ) {
-      ;(function(callback, index) {
-        start = function() {
-          addBubble(q[index], callback)
+  this.answer = (key, content) => {
+    var func = (key, content) => {
+      typeof window[key] === "function" ? window[key](content) : false;
+    };
+  
+    // Send user input to the Flask server
+    fetch('http://localhost:5000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ input: content })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the Flask server
+        if (data.content) {
+          structured_content = {says: data.content};
+          this.reply(structured_content);
+          standingAnswer = key;
+  
+          // Add re-generated user picks to the history stack
+          if (content !== undefined) {
+            interactionsSave(
+              '<span class="bubble-button reply-pick">' + content + "</span>",
+              "reply reply-pick"
+            );
+          }
+        } else {
+          func(key, content);
         }
-      })(start, nextCallback)
+      })
+      .catch(error => console.error('Error:', error));
+  };
+  
+  // api for typing bubble
+  this.think = () => {
+    bubbleTyping.classList.remove("imagine");
+    this.stop = () => {
+      bubbleTyping.classList.add("imagine");
+    };
+  };
+  
+  // "type" each message within the group
+  var orderBubbles = (q, callback) => {
+    var start = () => {
+      setTimeout(() => {
+        callback();
+      }, animationTime);
+    };
+    var position = 0;
+    if (typeof q === "string") { // Ensure q is a string
+      start = () => {
+        addBubble(q, callback);
+      };
+    } else {
+      console.error('Error: q is not a string', q);
     }
-    start()
-  }
+    start();
+  };
 
   // create a bubble
   var bubbleQueue = false

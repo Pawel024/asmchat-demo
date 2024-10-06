@@ -8,11 +8,8 @@ from llama_index.core import VectorStoreIndex
 
 import os
 
-
-openai_api_key = os.environ['OPENAI_API_KEY']
-
 parser = LlamaParse(
-    result_type="markdown"  # "markdown" and "text" are available
+    result_type="markdown",  # "markdown" and "text" are available
 )
 
 def parse_pdf(input_files, store=False):

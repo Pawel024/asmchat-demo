@@ -1,5 +1,6 @@
 *.pdf
 *.json
 *.pyc
+__pycache__/
 
 3-keyboard-input.html:Zone.Identifier
