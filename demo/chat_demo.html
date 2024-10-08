@@ -13,6 +13,8 @@
     <link rel="stylesheet" media="all" href="../component/styles/reply.css" />
     <link rel="stylesheet" media="all" href="../component/styles/typing.css" />
     <link rel="stylesheet" media="all" href="../component/styles/input.css" />
+    <link rel="stylesheet" media="all" href="../component/styles/dark-mode.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
     <!-- KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
@@ -38,10 +40,32 @@
     <!-- container element for chat window -->
     <div id="chat"></div>
 
+    <button id="dark-mode-toggle" class="dark-mode-toggle">
+      <i id="sun-icon" class="material-icons-outlined" style="display: none; font-size: 32px;">wb_sunny</i>
+      <i id="moon-icon" class="material-icons-outlined" style="font-size: 32px;">nightlight_round</i>
+    </button>
+
     <!-- import the JavaScript file -->
     <script src="../component/Bubbles.js"></script>
 
     <script>
+      // Dark mode toggle functionality
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      const sunIcon = document.getElementById('sun-icon');
+      const moonIcon = document.getElementById('moon-icon');
+
+      darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+        } else {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+        feather.replace();
+      });
+      
       // initialize by constructing a named function...
       // ...and add text processing plugin:
 

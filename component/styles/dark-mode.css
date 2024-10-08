@@ -1,0 +1,55 @@
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1e1e1e;
+}
+
+.dark-mode .bubble-container {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+.dark-mode .bubble-container .input-wrap textarea {
+    background: rgba(50, 50, 50, 0.95);
+    color: #f1f1f1;
+    box-shadow: 0 0 0 1px #555 inset;
+}
+
+.dark-mode .bubble.reply-freeform {
+    background-color: #1e1e1e
+}
+
+.dark-mode .bubble.reply.reply-freeform.say .bubble-content .bubble-button {
+    color: #212121;
+    background: rgba(255, 255, 255, 0.84);
+}
+
+.dark-mode .bubble, .dark-mode .bubble-typing {
+    color: rgba(255, 255, 255, 0.84);
+    background: #444;
+}
+
+.dark-mode .bubble.reply.say.bubble-hidden {
+    background-color: #1e1e1e;
+}
+
+.dark-mode-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.dark-mode-toggle i {
+    width: 30px;
+    height: 30px;
+}
+
+.material-icons-outlined {
+    color: rgba(30, 30, 30, 0.90)
+}
+
+.dark-mode .material-icons-outlined {
+    color: #f1f1f1;
+}
