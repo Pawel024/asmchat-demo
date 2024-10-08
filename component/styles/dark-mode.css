@@ -20,12 +20,12 @@ body.dark-mode {
 
 .dark-mode .bubble.reply.reply-freeform.say .bubble-content .bubble-button {
     color: #212121;
-    background: rgba(255, 255, 255, 0.84);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .dark-mode .bubble, .dark-mode .bubble-typing {
-    color: rgba(255, 255, 255, 0.84);
-    background: #444;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(50, 50, 50, 0.95);
 }
 
 .dark-mode .bubble.reply.say.bubble-hidden {
@@ -47,9 +47,9 @@ body.dark-mode {
 }
 
 .material-icons-outlined {
-    color: rgba(30, 30, 30, 0.90)
+    color: rgba(33, 33, 33, 0.90)
 }
 
 .dark-mode .material-icons-outlined {
-    color: rgba(241, 241, 241, 0.90)
+    color: rgba(255, 255, 255, 0.8)
 }
