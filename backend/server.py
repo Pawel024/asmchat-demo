@@ -72,7 +72,7 @@ chat_engine = read_data()
 # Basic Authentication
 def check_auth(username, password):
     if is_heroku:
-        return username == os.getenv('BASIC_AUTH_USERNAME') and password == os.getenv('BASIC_AUTH_PASSWORD')
+        return (username == os.getenv('BASIC_AUTH_USERNAME') and password == os.getenv('BASIC_AUTH_PASSWORD')) or (username == os.getenv('BASIC_AUTH_USERNAME_2') and password == os.getenv('BASIC_AUTH_USERNAME_2'))
     else:
         return username == 'admin' and password == 'admin'
 
