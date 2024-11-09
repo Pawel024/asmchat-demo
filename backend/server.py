@@ -1,3 +1,4 @@
+import os
 import os.path
 from llama_index.core import (
     StorageContext,
@@ -11,7 +12,7 @@ memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 
 from parse import parse_pdf
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 llm = OpenAI(model="gpt-4o-mini")
@@ -45,10 +46,14 @@ def read_data():
     ))
     return chat_engine
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../demo', static_url_path='/')
 CORS(app)
 
 chat_engine = read_data()
+
+@app.route('/')
+def serve_html():
+    return send_from_directory(app.static_folder, 'chat_demo.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -62,4 +67,6 @@ def chat():
     return jsonify({'key': 'response_key', 'content': response})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    host = os.getenv('FLASK_RUN_HOST', '0.0.0.0')
+    port = int(os.getenv('FLASK_RUN_PORT', 5000))
+    app.run(host=host, port=port)
