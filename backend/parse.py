@@ -8,9 +8,19 @@ from llama_index.core import VectorStoreIndex
 
 import os
 
-parser = LlamaParse(
-    result_type="markdown",  # "markdown" and "text" are available
-)
+# Check if running on Heroku
+is_heroku = os.getenv('DYNO') is not None
+
+if is_heroku:
+    llama_cloud_api_key = os.getenv('LLAMA_CLOUD_API_KEY')
+    parser = LlamaParse(
+        result_type="markdown",  # "markdown" and "text" are available
+        api_key=llama_cloud_api_key
+    )
+else:
+    parser = LlamaParse(
+        result_type="markdown",  # "markdown" and "text" are available
+    )
 
 def parse_pdf(input_files, store=False):
     # use SimpleDirectoryReader to parse our file
