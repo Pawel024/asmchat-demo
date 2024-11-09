@@ -1,5 +1,8 @@
 import os
 import requests
+from flask import Flask, jsonify, request, send_from_directory, Response
+from flask_cors import CORS
+from functools import wraps
 from llama_index.core import (
     StorageContext,
     load_index_from_storage,
@@ -11,9 +14,6 @@ from llama_index.core.memory import ChatMemoryBuffer
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 
 from backend.parse import parse_pdf
-
-from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
 
 # Check if running on Heroku
 is_heroku = os.getenv('DYNO') is not None
@@ -69,11 +69,32 @@ CORS(app)
 
 chat_engine = read_data()
 
+# Basic Authentication
+def check_auth(username, password):
+    return username == os.getenv('BASIC_AUTH_USERNAME') and password == os.getenv('BASIC_AUTH_PASSWORD')
+
+def authenticate():
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route('/')
+@requires_auth
 def serve_html():
     return send_from_directory(app.static_folder, 'chat_demo.html')
 
 @app.route('/chat', methods=['POST'])
+@requires_auth
 def chat():
     data = request.json
     user_input = data.get('input')
