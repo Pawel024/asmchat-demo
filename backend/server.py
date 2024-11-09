@@ -10,7 +10,7 @@ from llama_index.core.memory import ChatMemoryBuffer
 
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 
-from parse import parse_pdf
+from backend.parse import parse_pdf
 
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
