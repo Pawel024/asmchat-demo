@@ -2,6 +2,5 @@ Flask
 Flask-Cors
 gunicorn
 llama-index
-parse
+llama-parse
 python-dotenv
-openai
