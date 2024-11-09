@@ -17,7 +17,7 @@ from flask_cors import CORS
 llm = OpenAI(model="gpt-4o-mini")
 
 Settings.llm = llm
-input_files = ['data_unparsed/Aerodynamics_and_Aircraft_Performance_3e.pdf']
+input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
 PERSIST_DIR = "./data"
 
 
