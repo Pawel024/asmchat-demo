@@ -29,6 +29,8 @@ input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structure
 PERSIST_DIR = "./data"
 
 def download_file_from_onedrive(onedrive_link, local_path):
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    
     response = requests.get(onedrive_link)
     with open(local_path, 'wb') as file:
         file.write(response.content)
@@ -40,7 +42,7 @@ def read_data():
         local_path = 'data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
         download_file_from_onedrive(onedrive_link, local_path)
 
-    # load the existing index if data folder not empty, otherwise not run parse.py
+    # load the existing index if data folder not empty, otherwise run parse.py
     if os.path.exists(PERSIST_DIR) and os.listdir(PERSIST_DIR):
         storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
         index = load_index_from_storage(storage_context)
