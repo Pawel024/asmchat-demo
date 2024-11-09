@@ -1,5 +1,5 @@
 import os
-import os.path
+import requests
 from llama_index.core import (
     StorageContext,
     load_index_from_storage,
@@ -28,15 +28,24 @@ Settings.llm = llm
 input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
 PERSIST_DIR = "./data"
 
+def download_file_from_onedrive(onedrive_link, local_path):
+    response = requests.get(onedrive_link)
+    with open(local_path, 'wb') as file:
+        file.write(response.content)
 
 def read_data():
+    # Download the PDF from OneDrive if running on Heroku
+    if is_heroku:
+        onedrive_link = os.getenv('ONEDRIVE_LINK')
+        local_path = 'data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
+        download_file_from_onedrive(onedrive_link, local_path)
+
     # load the existing index if data folder not empty, otherwise not run parse.py
     if os.path.exists(PERSIST_DIR) and os.listdir(PERSIST_DIR):
         storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
         index = load_index_from_storage(storage_context)
     else:
         index = parse_pdf(input_files, store=True)
-
 
     # make a chat engine
     chat_engine = index.as_chat_engine(chat_mode="condense_plus_context",

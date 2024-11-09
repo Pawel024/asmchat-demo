@@ -4,3 +4,4 @@ gunicorn
 llama-index
 llama-parse
 python-dotenv
+requests
