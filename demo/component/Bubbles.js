@@ -79,6 +79,7 @@ function Bubbles(container, self, options) {
     var inputText = document.createElement("textarea");
     inputText.setAttribute("placeholder", "Ask me anything about aircraft performance or aerodynamics...");
     inputWrap.appendChild(inputText);
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://your-heroku-app.herokuapp.com';
     inputText.addEventListener("keypress", (e) => {
       // register user input
       if (e.keyCode == 13) {
@@ -96,7 +97,7 @@ function Bubbles(container, self, options) {
           "reply reply-freeform"
         );
         // Send user input to chatbot engine
-        fetch('http://localhost:5000/chat', {
+        fetch(`${backendUrl}/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
