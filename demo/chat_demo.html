@@ -16,6 +16,9 @@
     <link rel="stylesheet" media="all" href="../component/styles/dark-mode.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
+    <!-- Marked JS -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <!-- KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
     <!-- KaTeX JS -->
@@ -45,10 +48,8 @@
       <i id="moon-icon" class="material-icons-outlined" style="font-size: 32px;">nightlight_round</i>
     </button>
 
-    <!-- import the JavaScript file -->
-    <script src="../component/Bubbles.js"></script>
-
-    <script>
+    <script type="module">
+      import { Bubbles, prepHTML } from '../component/Bubbles.js';
       // Dark mode toggle functionality
       const darkModeToggle = document.getElementById('dark-mode-toggle');
       const sunIcon = document.getElementById('sun-icon');
