@@ -46,6 +46,7 @@ def download_file_from_onedrive(onedrive_link, local_path):
 
 def download_parsed_data_from_azure(blob_service_client, container_name, local_dir):
     try:
+        print(f"Downloading parsed data from Azure Blob Storage container '{container_name}' to '{local_dir}'")
         container_client = blob_service_client.get_container_client(container_name)
         blobs = container_client.list_blobs()
         for blob in blobs:
