@@ -239,7 +239,14 @@ export function Bubbles(container, self, options = {}) {
     bubbleWrap.insertBefore(bubble, bubbleTyping);
 
     // Render LaTeX equations using KaTeX
-    ensureKaTeXLoaded(() => renderMathInElement(bubbleContent));
+    ensureKaTeXLoaded(() => {
+      renderMathInElement(bubbleContent, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ]
+      });
+    });
 
     // answer picker styles
     if (reply !== "") {
