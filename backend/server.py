@@ -17,9 +17,6 @@ from backend.parse import parse_pdf
 
 from azure.storage.blob import BlobServiceClient
 
-# Set the directory to store the parsed data
-PERSIST_DIR = 'data_parsed'
-
 # Check if running on Heroku
 is_heroku = os.getenv('DYNO') is not None
 print(f'Running on Heroku: {is_heroku}')
