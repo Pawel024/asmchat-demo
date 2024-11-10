@@ -22,6 +22,7 @@ PERSIST_DIR = 'data_parsed'
 
 # Check if running on Heroku
 is_heroku = os.getenv('DYNO') is not None
+print(f'Running on Heroku: {is_heroku}')
 
 if is_heroku:
     openai_api_key = os.getenv('OPENAI_API_KEY')
