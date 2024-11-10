@@ -79,7 +79,7 @@ function Bubbles(container, self, options) {
     var inputText = document.createElement("textarea");
     inputText.setAttribute("placeholder", "Ask me anything about aircraft performance or aerodynamics...");
     inputWrap.appendChild(inputText);
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://your-heroku-app.herokuapp.com';
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
     inputText.addEventListener("keypress", (e) => {
       // register user input
       if (e.keyCode == 13) {
