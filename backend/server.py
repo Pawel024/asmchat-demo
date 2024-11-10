@@ -15,6 +15,11 @@ memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 
 from backend.parse import parse_pdf
 
+from azure.storage.blob import BlobServiceClient
+
+# Set the directory to store the parsed data
+PERSIST_DIR = 'data_parsed'
+
 # Check if running on Heroku
 is_heroku = os.getenv('DYNO') is not None
 
@@ -29,26 +34,73 @@ input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structure
 PERSIST_DIR = "./data"
 
 def download_file_from_onedrive(onedrive_link, local_path):
-    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-    
-    response = requests.get(onedrive_link)
-    with open(local_path, 'wb') as file:
-        file.write(response.content)
+    try:
+        response = requests.get(onedrive_link)
+        response.raise_for_status()
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        with open(local_path, 'wb') as file:
+            file.write(response.content)
+    except requests.RequestException as e:
+        print(f"Error downloading file from OneDrive: {e}")
+
+def download_parsed_data_from_azure(blob_service_client, container_name, local_dir):
+    try:
+        container_client = blob_service_client.get_container_client(container_name)
+        blobs = container_client.list_blobs()
+        for blob in blobs:
+            blob_client = container_client.get_blob_client(blob)
+            local_file_path = os.path.join(local_dir, blob.name)
+            os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+            with open(local_file_path, 'wb') as file:
+                file.write(blob_client.download_blob().readall())
+    except Exception as e:
+        print(f"Error downloading parsed data from Azure: {e}")
+
+def upload_parsed_data_to_azure(blob_service_client, container_name, local_dir):
+    try:
+        container_client = blob_service_client.get_container_client(container_name)
+        for root, dirs, files in os.walk(local_dir):
+            for file_name in files:
+                file_path = os.path.join(root, file_name)
+                blob_name = os.path.relpath(file_path, local_dir)
+                blob_client = container_client.get_blob_client(blob_name)
+                with open(file_path, 'rb') as file:
+                    blob_client.upload_blob(file, overwrite=True)
+    except Exception as e:
+        print(f"Error uploading parsed data to Azure: {e}")
 
 def read_data():
-    # Download the PDF from OneDrive if running on Heroku
-    if is_heroku:
-        onedrive_link = os.getenv('ONEDRIVE_LINK')
-        local_path = 'data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
-        download_file_from_onedrive(onedrive_link, local_path)
 
-    # load the existing index if data folder not empty, otherwise run parse.py
+    # Download the parsed data from Azure Blob Storage if running on Heroku
+    if is_heroku:
+        # Ensure PERSIST_DIR exists
+        os.makedirs(PERSIST_DIR, exist_ok=True)
+        blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
+        container_name = os.getenv('AZURE_CONTAINER_NAME')
+        download_parsed_data_from_azure(blob_service_client, container_name, PERSIST_DIR)
+
+    # Check if parsed data already exists
     if os.path.exists(PERSIST_DIR) and os.listdir(PERSIST_DIR):
         storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
         index = load_index_from_storage(storage_context)
     else:
+        # Download the PDF from OneDrive if running on Heroku
+        if is_heroku:
+            onedrive_link = os.getenv('ONEDRIVE_LINK')
+            local_path = 'data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
+            download_file_from_onedrive(onedrive_link, local_path)
+
+        # Parse the PDF and store the parsed data
+        input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
         index = parse_pdf(input_files, store=True)
 
+        # Upload the parsed data to Azure Blob Storage for future use
+        if is_heroku:
+            upload_parsed_data_to_azure(blob_service_client, container_name, PERSIST_DIR)
+    
+    return index
+
+def create_chat_engine(index):
     # make a chat engine
     chat_engine = index.as_chat_engine(chat_mode="condense_plus_context",
                                        memory=memory,
@@ -67,7 +119,7 @@ def read_data():
 app = Flask(__name__, static_folder='../demo', static_url_path='/')
 CORS(app)
 
-chat_engine = read_data()
+chat_engine = create_chat_engine(read_data())
 
 # Basic Authentication
 def check_auth(username, password):
