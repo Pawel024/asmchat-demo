@@ -1,5 +1,5 @@
 // core function
-export function Bubbles(container, self, options = {}) {
+export default function Bubbles(container, self, options = {}) {
   // options
   const animationTime = options.animationTime || 200; // how long it takes to animate chat bubble, also set in CSS
   const typeSpeed = options.typeSpeed || 5; // delay per character, to simulate the machine "typing"
@@ -9,9 +9,9 @@ export function Bubbles(container, self, options = {}) {
   const inputCallbackFn = options.inputCallbackFn || false; // should we display an input field?
   const responseCallbackFn = options.responseCallbackFn || false; // is there a callback function for when a user clicks on a bubble button
 
-  var standingAnswer = "ice"; // remember where to restart convo if interrupted
+  let standingAnswer = "ice"; // remember where to restart convo if interrupted
 
-  var _convo = {}; // local memory for conversation JSON object
+  let _convo = {}; // local memory for conversation JSON object
   //--> NOTE that this object is only assigned once, per session and does not change for this
   // 		constructor name during open session.
 
@@ -72,7 +72,7 @@ export function Bubbles(container, self, options = {}) {
   container.appendChild(bubbleWrap);
 
   // install user input textfield
-  this.typeInput = (callbackFn) => {
+  this.typeInput = () => {
     const inputWrap = document.createElement("div");
     inputWrap.className = "input-wrap";
     const inputText = document.createElement("textarea");
@@ -116,7 +116,7 @@ export function Bubbles(container, self, options = {}) {
     bubbleWrap.style.paddingBottom = "100px";
     inputText.focus();
   };
-  inputCallbackFn ? this.typeInput(inputCallbackFn) : false;
+  inputCallbackFn ? this.typeInput() : false;
   
   // init typing bubble
   const bubbleTyping = document.createElement("div");
@@ -202,14 +202,6 @@ export function Bubbles(container, self, options = {}) {
       func(key, content);
     }
   };
-  
-  // api for typing bubble
-  this.think = () => {
-    bubbleTyping.classList.remove("imagine");
-    this.stop = () => {
-      bubbleTyping.classList.add("imagine");
-    };
-  };
 
   const ensureKaTeXLoaded = (callback) => {
     if (typeof renderMathInElement !== 'undefined') {
@@ -285,7 +277,7 @@ export function Bubbles(container, self, options = {}) {
     // time, size & animate
     let wait = live ? animationTime * 2 : 0;
     const minTypingWait = live ? animationTime * 6 : 0;
-    if (say.length * typeSpeed > animationTime && reply == "") {
+    if (say.length * typeSpeed > animationTime && reply === "") {
       wait += typeSpeed * say.length;
       wait < minTypingWait ? (wait = minTypingWait) : false;
       setTimeout(() => {
@@ -298,7 +290,7 @@ export function Bubbles(container, self, options = {}) {
     bubbleQueue = setTimeout(() => {
       bubble.classList.remove("imagine");
       const bubbleWidthCalc = bubbleContent.offsetWidth + widerBy + "px";
-      bubble.style.width = reply == "" ? bubbleWidthCalc : "";
+      bubble.style.width = reply === "" ? bubbleWidthCalc : "";
       bubble.style.width = say.includes("<img src=")
         ? "50%"
         : bubble.style.width;
@@ -338,32 +330,4 @@ export function Bubbles(container, self, options = {}) {
       this.iceBreaker
     );
   }
-}
-
-// below functions are specifically for WebPack-type project that work with import()
-
-// this function automatically adds all HTML and CSS necessary for chat-bubble to function
-export function prepHTML(options = {}) {
-  const container = options.container || "chat"; // id of the container HTML element
-  const relative_path = options.relative_path || "./node_modules/chat-bubble/";
-
-  // make HTML container element
-  window[container] = document.createElement("div");
-  window[container].setAttribute("id", container);
-  document.body.appendChild(window[container]);
-
-  // style everything
-  const appendCSS = (file) => {
-    const link = document.createElement("link");
-    link.href = file;
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.media = "screen,print";
-    document.getElementsByTagName("head")[0].appendChild(link);
-  };
-  appendCSS(relative_path + "component/styles/input.css");
-  appendCSS(relative_path + "component/styles/reply.css");
-  appendCSS(relative_path + "component/styles/says.css");
-  appendCSS(relative_path + "component/styles/setup.css");
-  appendCSS(relative_path + "component/styles/typing.css");
 }
