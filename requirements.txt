@@ -6,4 +6,4 @@ llama-parse
 python-dotenv
 requests
 Flask-Login
-azure.storage.blob
+azure-storage-blob

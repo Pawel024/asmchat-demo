@@ -31,7 +31,8 @@ Settings.llm = llm
 input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
 PERSIST_DIR = "./data"
 
-def download_file_from_onedrive(onedrive_link, local_path):
+def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
+    """Download a file from OneDrive and save it to the local path."""
     try:
         response = requests.get(onedrive_link)
         response.raise_for_status()
@@ -41,7 +42,8 @@ def download_file_from_onedrive(onedrive_link, local_path):
     except requests.RequestException as e:
         print(f"Error downloading file from OneDrive: {e}")
 
-def download_parsed_data_from_azure(blob_service_client, container_name, local_dir):
+def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
+    """Download parsed data from Azure Blob Storage to the local directory."""
     try:
         print(f"Downloading parsed data from Azure Blob Storage container '{container_name}' to '{local_dir}'")
         container_client = blob_service_client.get_container_client(container_name)
@@ -55,13 +57,14 @@ def download_parsed_data_from_azure(blob_service_client, container_name, local_d
     except Exception as e:
         print(f"Error downloading parsed data from Azure: {e}")
 
-def upload_parsed_data_to_azure(blob_service_client, container_name, local_dir):
+def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
+    """Upload parsed data from the local directory to Azure Blob Storage."""
     try:
         container_client = blob_service_client.get_container_client(container_name)
         for root, dirs, files in os.walk(local_dir):
             for file_name in files:
-                file_path = os.path.join(root, file_name)
-                blob_name = os.path.relpath(file_path, local_dir)
+                file_path = str(os.path.join(root, file_name))
+                blob_name = str(os.path.relpath(file_path, local_dir))
                 blob_client = container_client.get_blob_client(blob_name)
                 with open(file_path, 'rb') as file:
                     blob_client.upload_blob(file, overwrite=True)
@@ -69,6 +72,10 @@ def upload_parsed_data_to_azure(blob_service_client, container_name, local_dir):
         print(f"Error uploading parsed data to Azure: {e}")
 
 def read_data():
+    """Read the parsed data from Azure Blob Storage or the local directory."""
+
+    blob_service_client = None
+    container_name = None
 
     # Download the parsed data from Azure Blob Storage if running on Heroku
     if is_heroku:
@@ -90,7 +97,6 @@ def read_data():
             download_file_from_onedrive(onedrive_link, local_path)
 
         # Parse the PDF and store the parsed data
-        input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
         index = parse_pdf(input_files, store=True)
 
         # Upload the parsed data to Azure Blob Storage for future use
@@ -100,8 +106,9 @@ def read_data():
     return index
 
 def create_chat_engine(index):
+    """Create a chat engine using the LlamaIndex chat engine."""
     # make a chat engine
-    chat_engine = index.as_chat_engine(chat_mode="condense_plus_context",
+    chat_engine_ = index.as_chat_engine(chat_mode="condense_plus_context",
                                        memory=memory,
                                        context_prompt=(
         "You are ASM Chatbot, a helpful studying assistant able to have normal interactions,"
@@ -113,7 +120,7 @@ def create_chat_engine(index):
         " If a question is not directly related to the context, say 'Sorry, I can't help with that."
         " Never say something you are not absolutely confident about. Never lie. Never be rude."
     ))
-    return chat_engine
+    return chat_engine_
 
 app = Flask(__name__, static_folder='../demo', static_url_path='/')
 CORS(app)
@@ -121,22 +128,25 @@ CORS(app)
 chat_engine = create_chat_engine(read_data())
 
 # Basic Authentication
-def check_auth(username, password):
+def check_auth(username: str, password: str) -> bool:
+    """Check if the username and password are correct."""
     if is_heroku:
         return (username == os.getenv('BASIC_AUTH_USERNAME') and password == os.getenv('BASIC_AUTH_PASSWORD')) or \
                (username == os.getenv('BASIC_AUTH_USERNAME_2') and password == os.getenv('BASIC_AUTH_PASSWORD_2'))
     else:
         return username == 'admin' and password == 'admin'
 
-def authenticate():
+def authenticate() -> Response:
+    """Send a 401 response that enables basic auth."""
     return Response(
         'Could not verify your access level for that URL.\n'
         'You have to login with proper credentials', 401,
         {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
-def requires_auth(f):
+def requires_auth(f: callable) -> callable:
     @wraps(f)
     def decorated(*args, **kwargs):
+        """Check if the user is authenticated."""
         auth = request.authorization
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
@@ -145,12 +155,14 @@ def requires_auth(f):
 
 @app.route('/')
 @requires_auth
-def serve_html():
+def serve_html() -> Response:
+    """Serve the chat demo HTML file."""
     return send_from_directory(app.static_folder, 'chat_demo.html')
 
 @app.route('/chat', methods=['POST'])
 @requires_auth
-def chat():
+def chat() -> Response:
+    """Send a chat input to the chat engine and return the response."""
     data = request.json
     user_input = data.get('input')
     
