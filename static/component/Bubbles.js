@@ -236,7 +236,7 @@ export function Bubbles(container, self, options = {}) {
     };
 
     // Parse the message content with Marked.js for Markdown support
-    const parsedContent = marked(say, { renderer });
+    const parsedContent = marked.marked(say, { renderer });
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
