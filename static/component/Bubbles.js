@@ -81,7 +81,7 @@ export default function Bubbles(container, self, options = {}) {
     const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
     inputText.addEventListener("keypress", (e) => {
       // register user input
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         typeof bubbleQueue !== false ? clearTimeout(bubbleQueue) : false; // allow user to interrupt the bot
         let lastBubble = document.querySelectorAll(".bubble.say");
