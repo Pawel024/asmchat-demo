@@ -228,8 +228,6 @@ export function Bubbles(container, self, options = {}) {
     // create bubble element
     const bubble = document.createElement("div");
 
-    console.log('say before substituting:', say); // TODO: remove
-
     // Replace \[ with $$ and \] with $$
     say = say.replace(/\\\[|\\\]/g, function(match) {
       return match === '\\[' ? '$$' : '$$';
@@ -240,12 +238,8 @@ export function Bubbles(container, self, options = {}) {
       return match === '\\(' ? '$' : '$';
     });
 
-    console.log('say after substituting:', say); // TODO: remove
-
     // Parse the message content with Marked.js for Markdown support
     const parsedContent = marked.marked(say);
-
-    console.log('parsedContent:', parsedContent); // TODO: remove
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
