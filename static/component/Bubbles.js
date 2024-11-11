@@ -228,37 +228,19 @@ export function Bubbles(container, self, options = {}) {
     // create bubble element
     const bubble = document.createElement("div");
 
-    // Custom tokenizer to preserve LaTeX delimiters
-    const tokenizer = {
-      codespan(src) {
-        const match = src.match(/^\\\((.*?)\\\)/);
-        if (match) {
-          return {
-            type: 'codespan',
-            raw: match[0],
-            text: match[1],
-            tokens: this.lexer.inlineTokens(match[1])
-          };
-        }
-        return false;
-      },
-      text(src) {
-        const match = src.match(/^\\\[(.*?)\\\]/);
-        if (match) {
-          return {
-            type: 'text',
-            raw: match[0],
-            text: match[1],
-            tokens: this.lexer.inlineTokens(match[1])
-          };
-        }
-        return false;
-      }
-    };
-    // Set the custom tokenizer
-    marked.use({ tokenizer });
+    console.log('say before substituting:', say); // TODO: remove
 
-    console.log('say:', say); // TODO: remove
+    // Replace \[ with $$ and \] with $$
+    say = say.replace(/\\\[|\\\]/g, function(match) {
+      return match === '\\[' ? '$$' : '$$';
+    });
+
+    // Replace \( with $ and \) with $
+    say = say.replace(/\\\(|\\\)/g, function(match) {
+      return match === '\\(' ? '$' : '$';
+    });
+
+    console.log('say after substituting:', say); // TODO: remove
 
     // Parse the message content with Marked.js for Markdown support
     const parsedContent = marked.marked(say);
