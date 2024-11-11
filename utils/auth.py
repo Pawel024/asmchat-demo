@@ -1,7 +1,7 @@
 import os
 from flask import request, Response
 from functools import wraps
-from config import is_heroku
+from utils.config import is_heroku
 
 # Basic Authentication
 def check_auth(username: str, password: str) -> bool:

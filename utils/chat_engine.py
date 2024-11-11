@@ -1,8 +1,8 @@
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
-from config import llm, input_files, PERSIST_DIR, is_heroku
+from utils.config import llm, input_files, PERSIST_DIR, is_heroku
 from backend.parse import parse_pdf
-from azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive
+from utils.azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive
 from azure.storage.blob import BlobServiceClient
 import os
 from llama_index.core import Settings

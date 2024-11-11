@@ -1,6 +1,6 @@
 from flask import jsonify, request, send_from_directory, Response
-from auth import requires_auth
-from chat_engine import read_data, create_chat_engine
+from utils.auth import requires_auth
+from utils.chat_engine import read_data, create_chat_engine
 
 chat_engine = create_chat_engine(read_data())
 
