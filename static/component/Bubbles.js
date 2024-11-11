@@ -228,15 +228,36 @@ export function Bubbles(container, self, options = {}) {
     // create bubble element
     const bubble = document.createElement("div");
 
-    // Custom renderer to preserve LaTeX delimiters
-    const renderer = new marked.Renderer();
-    renderer.text = (text) => {
-      return text.replace(/\\\[/g, '\\[').replace(/\\\]/g, '\\]')
-                .replace(/\\\(/g, '\\(').replace(/\\\)/g, '\\)');
+    // Custom tokenizer to preserve LaTeX delimiters
+    const tokenizer = {
+      codespan(src) {
+        const match = src.match(/^\\\((.*?)\\\)/);
+        if (match) {
+          return {
+            type: 'codespan',
+            raw: match[0],
+            text: match[1],
+            tokens: this.lexer.inlineTokens(match[1])
+          };
+        }
+        return false;
+      },
+      text(src) {
+        const match = src.match(/^\\\[(.*?)\\\]/);
+        if (match) {
+          return {
+            type: 'text',
+            raw: match[0],
+            text: match[1],
+            tokens: this.lexer.inlineTokens(match[1])
+          };
+        }
+        return false;
+      }
     };
 
     // Parse the message content with Marked.js for Markdown support
-    const parsedContent = marked.marked(say, { renderer });
+    const parsedContent = marked.marked(say, { tokenizer });
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
