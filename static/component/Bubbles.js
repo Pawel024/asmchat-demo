@@ -228,14 +228,22 @@ export function Bubbles(container, self, options = {}) {
     // create bubble element
     const bubble = document.createElement("div");
 
+    // Custom renderer to preserve LaTeX delimiters
+    const renderer = new marked.Renderer();
+    renderer.text = (text) => {
+      return text.replace(/\\\[/g, '\\[').replace(/\\\]/g, '\\]')
+                .replace(/\\\(/g, '\\(').replace(/\\\)/g, '\\)');
+    };
+
     // Parse the message content with Marked.js for Markdown support
-    const parsedContent = marked.parse(say);
+    const parsedContent = marked.marked(say, { renderer: renderer });
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
     bubbleContent.className = "bubble-content";
     bubbleContent.innerHTML = parsedContent;
     bubble.appendChild(bubbleContent);
+    bubbleWrap.insertBefore(bubble, bubbleTyping);
 
     // Render LaTeX equations using KaTeX
     ensureKaTeXLoaded(() => {
@@ -248,8 +256,6 @@ export function Bubbles(container, self, options = {}) {
         ]
       });
     });
-    
-    bubbleWrap.insertBefore(bubble, bubbleTyping);
 
     // answer picker styles
     if (reply !== "") {
