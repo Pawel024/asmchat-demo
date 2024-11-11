@@ -236,7 +236,6 @@ export function Bubbles(container, self, options = {}) {
     bubbleContent.className = "bubble-content";
     bubbleContent.innerHTML = parsedContent;
     bubble.appendChild(bubbleContent);
-    bubbleWrap.insertBefore(bubble, bubbleTyping);
 
     // Render LaTeX equations using KaTeX
     ensureKaTeXLoaded(() => {
@@ -249,6 +248,8 @@ export function Bubbles(container, self, options = {}) {
         ]
       });
     });
+    
+    bubbleWrap.insertBefore(bubble, bubbleTyping);
 
     // answer picker styles
     if (reply !== "") {
