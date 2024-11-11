@@ -3,7 +3,7 @@ from flask_cors import CORS
 from utils.routes import init_routes
 import os
 
-app = Flask(__name__, static_folder='./demo', static_url_path='/')
+app = Flask(__name__, static_folder='./static', static_url_path='/')
 CORS(app)
 
 # Initialize routes
