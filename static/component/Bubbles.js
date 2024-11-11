@@ -258,8 +258,12 @@ export function Bubbles(container, self, options = {}) {
     // Set the custom tokenizer
     marked.use({ tokenizer });
 
+    console.log('say:', say); // TODO: remove
+
     // Parse the message content with Marked.js for Markdown support
     const parsedContent = marked.marked(say);
+
+    console.log('parsedContent:', parsedContent); // TODO: remove
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
