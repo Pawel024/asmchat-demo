@@ -30,7 +30,7 @@ def parse_pdf(input_files, store=False):
     index = VectorStoreIndex.from_documents(documents)
 
     # store it for later if store==True
-    PERSIST_DIR = "./data"
+    persist_dir = "./data"
     if store:
-        index.storage_context.persist(persist_dir=PERSIST_DIR)
+        index.storage_context.persist(persist_dir=persist_dir)
     return index

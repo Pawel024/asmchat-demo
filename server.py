@@ -28,8 +28,8 @@ else:
     llm = OpenAI(model="gpt-4o-mini")
 
 Settings.llm = llm
-input_files = ['data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
-PERSIST_DIR = "./data"
+input_files = ['backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
+PERSIST_DIR = "./backend/data"
 
 def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
     """Download a file from OneDrive and save it to the local path."""
@@ -122,7 +122,7 @@ def create_chat_engine(index):
     ))
     return chat_engine_
 
-app = Flask(__name__, static_folder='../demo', static_url_path='/')
+app = Flask(__name__, static_folder='./demo', static_url_path='/')
 CORS(app)
 
 chat_engine = create_chat_engine(read_data())
