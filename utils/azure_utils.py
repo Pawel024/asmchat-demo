@@ -54,8 +54,8 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
         container_client = blob_service_client.get_container_client(container_name)
         for root, dirs, files in os.walk(local_dir):
             for file_name in files:
-                file_path = str(os.path.join(root, file_name))
-                blob_name = str(os.path.relpath(file_path, local_dir))
+                file_path = os.path.join(root, file_name)
+                blob_name = os.path.relpath(file_path, local_dir)
                 blob_client = container_client.get_blob_client(blob_name)
                 with open(file_path, 'rb') as file:
                     blob_client.upload_blob(file, overwrite=True)
