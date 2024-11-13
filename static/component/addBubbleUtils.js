@@ -67,7 +67,14 @@ const addBubble = (say, posted, container, animTime, tSpeed, widerBy, sidePaddin
       // Ensure KaTeX is loaded and then render LaTeX equations
       ensureKaTeXLoaded(() => {
         console.log("Rendering math in element.");
-        renderMathInElement(bubbleContent);
+        renderMathInElement(bubbleContent, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "\\(", right: "\\)", display: false}
+          ]
+        });
       });
     }
 
