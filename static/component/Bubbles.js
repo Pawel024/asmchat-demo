@@ -261,14 +261,14 @@ export default function Bubbles(container, self, options = {}) {
       // Get all the emojis available to use on GitHub.
       const res = await octokit.rest.emojis.get();
 
-      const emojis = res.data;
+      /*const emojis = res.data;
 
       const options = {
         emojis,
         renderer: (token) => `<img alt="${token.name}" src="${token.emoji}" class="marked-emoji-img">`
       };
 
-      /*// support for emojis
+      // support for emojis
       // marked.use(markedEmoji.markedEmoji(options));
       */
       
