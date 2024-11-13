@@ -207,6 +207,7 @@ export default function Bubbles(container, self, options = {}) {
 
   const ensureKaTeXLoaded = (callback) => {
     if (typeof renderMathInElement !== 'undefined') {
+      console.log("KaTeX is loaded.");
       callback();
     } else {
       console.log("KaTeX not yet loaded. Retrying...");
@@ -216,16 +217,18 @@ export default function Bubbles(container, self, options = {}) {
 
   const ensureMarkedLoaded = (callback) => {
     if (typeof marked.parse !== 'undefined' && typeof markedEmoji.markedEmoji === 'function') {
+      console.log("Marked and markedEmoji are loaded.");
       callback();
     } else {
-      console.log("Marked not yet loaded. Retrying...");
+      console.log("Marked or markedEmoji not yet loaded. Retrying...");
       setTimeout(() => ensureMarkedLoaded(callback), 20);
     }
-  }
+  };
 
   // create a bubble
   let bubbleQueue = false;
   const addBubble = (say, posted, reply = "", live = true, iceBreaker = false) => {
+    console.log("addBubble called with say:", say);
     const animationTime = live ? this.animationTime : 0;
     const typeSpeed = live ? this.typeSpeed : 0;
     // create bubble element
@@ -241,11 +244,14 @@ export default function Bubbles(container, self, options = {}) {
       return match === '\\(' ? '$' : '$';
     });
 
+    console.log("Processed say:", say);
+
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
     bubbleContent.className = "bubble-content";
-    
+
     async function setupMarked() {
+      console.log("Setting up marked...");
       // support for code previews
       // marked.use(markedCodePreview)
 
@@ -266,18 +272,22 @@ export default function Bubbles(container, self, options = {}) {
 
       // parse markdown
       const parsedContent = marked.parse(say);
-    
+
+      console.log("Parsed content:", parsedContent);
+
       return parsedContent;
     }
 
     ensureMarkedLoaded(() => {
       setupMarked().then(parsedContent => {
+        console.log("Setting innerHTML of bubbleContent.");
         bubbleContent.innerHTML = parsedContent;
         bubble.appendChild(bubbleContent);
         bubbleWrap.insertBefore(bubble, bubbleTyping);
-  
+
         // Ensure KaTeX is loaded and then render LaTeX equations
         ensureKaTeXLoaded(() => {
+          console.log("Rendering math in element.");
           renderMathInElement(bubbleContent);
         });
       }).catch(error => {
