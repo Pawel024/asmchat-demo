@@ -32,7 +32,7 @@ def read_data():
         # Download the PDF from OneDrive if running on Heroku
         if is_heroku:
             onedrive_link = os.getenv('ONEDRIVE_LINK')
-            local_path = 'data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
+            local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
             download_file_from_onedrive(onedrive_link, local_path)
 
         # Parse the PDF and store the parsed data
