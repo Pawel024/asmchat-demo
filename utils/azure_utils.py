@@ -15,7 +15,7 @@ def list_files_in_directory(directory: str) -> None:
 def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
     """Download a file from OneDrive and save it to the local path."""
     try:
-        print(f"\n\nDownloading file from OneDrive to '{local_path}'\n")
+        print(f"\nDownloading file from OneDrive to '{local_path}'\n")
         response = requests.get(onedrive_link)
         response.raise_for_status()
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
@@ -40,6 +40,7 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
             print(f"Blob '{blob.name}' downloaded!'")
         print("")
         list_files_in_directory(local_dir)  # List files after download
+        print("")
     except Exception as e:
         raise Exception(f"\n\nError downloading parsed data from Azure: {e}\n")
 
@@ -47,7 +48,6 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
     """Upload parsed data from the local directory to Azure Blob Storage."""
     try:
         print(f"\n\nUploading parsed data from '{local_dir}' to Azure container '{container_name}:'\n")
-        list_files_in_directory(local_dir)  # List files before upload
         container_client = blob_service_client.get_container_client(container_name)
         for root, dirs, files in os.walk(local_dir):
             for file_name in files:
@@ -57,6 +57,6 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
                 with open(file_path, 'rb') as file:
                     blob_client.upload_blob(file, overwrite=True)
                 print(f"File '{file_path}' uploaded as blob '{blob_name}'")
-        list_files_in_directory(local_dir)  # List files after upload
+        print("")
     except Exception as e:
         raise Exception(f"\n\nError uploading parsed data to Azure: {e}\n\n")

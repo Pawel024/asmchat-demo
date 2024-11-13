@@ -35,7 +35,7 @@ def read_data():
     if os.path.exists(persist_dir) and os.listdir(persist_dir):
         storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
         index = load_index_from_storage(storage_context)
-        print("\n\nFound parsed data, skipping parsing!\n\n")
+        print("\nFound parsed data, skipping parsing!\n\n")
     else:
         # Download the PDF from OneDrive if running on Heroku
         if is_heroku and not data_parsed:
