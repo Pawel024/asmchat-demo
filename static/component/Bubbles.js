@@ -238,7 +238,7 @@ export default function Bubbles(container, self, options = {}) {
     
     async function setupMarked() {
       // support for code previews
-      marked.use(markedCodePreview)
+      // marked.use(markedCodePreview)
 
       // setup for emoji support
       const octokit = new Octokit();
