@@ -1,5 +1,3 @@
-import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
-
 // core function
 export default function Bubbles(container, self, options = {}) {
   // options
@@ -93,7 +91,7 @@ export default function Bubbles(container, self, options = {}) {
           ? lastBubble.classList.add("bubble-hidden")
           : false;
         addBubble(
-          '<span class="bubble-button bubble-pick">' + inputText.value + "</span>",
+          '---input---' + inputText.value,
           () => {},
           "reply reply-freeform"
         );
@@ -217,7 +215,7 @@ export default function Bubbles(container, self, options = {}) {
 
   const ensureMarkedLoaded = (callback) => {
     // reimplement emojis when debugging is done
-    if (typeof marked.marked !== 'undefined') {
+    if (typeof marked.parse !== 'undefined') {
       console.log("Marked is loaded!");
       callback();
     } else {
@@ -235,6 +233,12 @@ export default function Bubbles(container, self, options = {}) {
     // create bubble element
     const bubble = document.createElement("div");
 
+    let isAnInput = say.startsWith('---input---');
+
+    if (isAnInput) {
+      say = say.replace('---input---', '');
+    }
+
     // Replace \[ with $$ and \] with $$
     say = say.replace(/\\\[|\\\]/g, function(match) {
       return match === '\\[' ? '$$' : '$$';
@@ -244,58 +248,51 @@ export default function Bubbles(container, self, options = {}) {
     say = say.replace(/\\\(|\\\)/g, function(match) {
       return match === '\\(' ? '$' : '$';
     });
-
+     
     console.log("Processed say:", say);
 
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
     bubbleContent.className = "bubble-content";
 
-    async function setupMarked() {
+    const setupMarked = () => {
       console.log("Setting up marked...");
-      // support for code previews
-      // marked.use(markedCodePreview)
-
-      // setup for emoji support
-      const octokit = new Octokit();
-      // Get all the emojis available to use on GitHub.
-      /*const res = await octokit.rest.emojis.get();
-
-      const emojis = res.data;
-
-      const options = {
-        emojis,
-        renderer: (token) => `<img alt="${token.name}" src="${token.emoji}" class="marked-emoji-img">`
-      };
-
-      // support for emojis
-      // marked.use(markedEmoji.markedEmoji(options));
-      */
       
+      const { Marked } = globalThis.marked;
+      const { markedHighlight } = globalThis.markedHighlight;
+      const newMarked = new Marked(
+        markedHighlight({
+        emptyLangClass: 'hljs',
+          langPrefix: 'hljs language-',
+          highlight(code, lang, info) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+          }
+        })
+      );      
+
       // parse markdown
-      const parsedContent = marked.marked(say);
+      let parsedContent = newMarked.parse(say);
+
+      if (isAnInput) {
+        parsedContent = '<span class="bubble-button bubble-pick">' + parsedContent + "</span>";
+      }
 
       console.log("Parsed content:", parsedContent);
 
-      return parsedContent;
+      console.log("Setting innerHTML of bubbleContent");
+      bubbleContent.innerHTML = parsedContent;
+      bubble.appendChild(bubbleContent);
+      bubbleWrap.insertBefore(bubble, bubbleTyping);
+
+      // Ensure KaTeX is loaded and then render LaTeX equations
+      ensureKaTeXLoaded(() => {
+        console.log("Rendering math in element.");
+        renderMathInElement(bubbleContent);
+      });
     }
 
-    ensureMarkedLoaded(() => {
-      setupMarked().then(parsedContent => {
-        console.log("Setting innerHTML of bubbleContent");
-        bubbleContent.innerHTML = parsedContent;
-        bubble.appendChild(bubbleContent);
-        bubbleWrap.insertBefore(bubble, bubbleTyping);
-
-        // Ensure KaTeX is loaded and then render LaTeX equations
-        ensureKaTeXLoaded(() => {
-          console.log("Rendering math in element.");
-          renderMathInElement(bubbleContent);
-        });
-      }).catch(error => {
-        console.error('Error parsing markdown:', error);
-      });
-    });
+    ensureMarkedLoaded(setupMarked);
 
     // answer picker styles
     if (reply !== "") {
