@@ -72,7 +72,7 @@ def create_chat_engine(index):
         "\nInstruction: Use the previous chat history, or the context above, to interact and help the user."
         " Format your responses in markdown. If providing equations, use $$ as delimiters for block formulas, e.g. $$1+1 = 2$$."
         " For inline equations, use $ written directly before and directly after the expression."
-        " For example, $a = 1 + \pi$ is valid, while $ a = 1 + \pi $ is not."
+        " For example, $a = 1 + b$ is valid, while $ a = 1 + b $ is not."
         " If providing code, do so in the following format: ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```."
         " If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."
         " If a question cannot be answered using the context (the book), say 'Sorry, I can't help with that."
