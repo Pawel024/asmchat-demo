@@ -1,3 +1,5 @@
+import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
+
 // core function
 export default function Bubbles(container, self, options = {}) {
   // options
@@ -230,26 +232,45 @@ export default function Bubbles(container, self, options = {}) {
       return match === '\\(' ? '$' : '$';
     });
 
-    // Parse the message content with Marked.js for Markdown support
-    const parsedContent = marked.marked(say);
-
     const bubbleContent = document.createElement("span");
     bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
     bubbleContent.className = "bubble-content";
-    bubbleContent.innerHTML = parsedContent;
-    bubble.appendChild(bubbleContent);
-    bubbleWrap.insertBefore(bubble, bubbleTyping);
+    
+    async function setupMarked() {
+      // support for code previews
+      marked.use(markedCodePreview)
 
-    // Ensure KaTeX is loaded and then render LaTeX equations
-    ensureKaTeXLoaded(() => {
-      renderMathInElement(bubbleContent, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\[", right: "\\]", display: true},
-          {left: "\\(", right: "\\)", display: false}
-        ]
-      });
+      // setup for emoji support
+      const octokit = new Octokit();
+      // Get all the emojis available to use on GitHub.
+      const res = await octokit.rest.emojis.get();
+
+      const emojis = res.data;
+
+      const options = {
+        emojis,
+        renderer: (token) => `<img alt="${token.name}" src="${token.emoji}" class="marked-emoji-img">`
+      };
+
+      // support for emojis
+      marked.use(markedEmoji(options));
+
+      // parse markdown
+      const parsedContent = marked.marked(say);
+    
+      return parsedContent;
+    }
+
+    setupMarked().then(parsedContent => {
+      bubbleContent.innerHTML = parsedContent;
+      bubble.appendChild(bubbleContent);
+      bubbleWrap.insertBefore(bubble, bubbleTyping);
+
+      // Ensure KaTeX is loaded and then render LaTeX equations
+      ensureKaTeXLoaded(() => {
+        renderMathInElement(bubbleContent);
+    }).catch(error => {
+      console.error('Error parsing markdown:', error);
     });
 
     // answer picker styles
