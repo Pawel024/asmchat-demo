@@ -269,6 +269,7 @@ export default function Bubbles(container, self, options = {}) {
       // Ensure KaTeX is loaded and then render LaTeX equations
       ensureKaTeXLoaded(() => {
         renderMathInElement(bubbleContent);
+      });
     }).catch(error => {
       console.error('Error parsing markdown:', error);
     });
