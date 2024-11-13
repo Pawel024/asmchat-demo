@@ -3,9 +3,6 @@ import requests
 import logging
 from azure.storage.blob import BlobServiceClient
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
     """Download a file from OneDrive and save it to the local path."""
     try:
