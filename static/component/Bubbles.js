@@ -275,7 +275,9 @@ export default function Bubbles(container, self, options = {}) {
       let parsedContent = newMarked.parse(say);
 
       if (isAnInput) {
-        parsedContent = '<span class="bubble-button bubble-pick">' + parsedContent + "</span>";
+        parsedContent = '<div class="user-message"><span class="bubble-button bubble-pick">' + parsedContent + "</span></div>";
+      } else {
+        parsedContent = '<div class="bot-message">' + parsedContent + "</div>";
       }
 
       console.log("Parsed content:", parsedContent);

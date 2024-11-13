@@ -5,12 +5,11 @@ body.dark-mode {
 
 .dark-mode .bubble-container {
     background-color: #1e1e1e;
-    color: #f1f1f1;
 }
 
 .dark-mode .bubble-container .input-wrap textarea {
     background: rgba(50, 50, 50, 0.95);
-    color: #f1f1f1;
+    color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 0 1px #555 inset;
 }
 

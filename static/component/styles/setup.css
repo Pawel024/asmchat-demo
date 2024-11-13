@@ -19,6 +19,7 @@
 	padding: 10px calc(17px + 10px) 30px 10px;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
+	transform: translate3d(0, 0, 0);
 	-webkit-transform: translate3d(0, 0, 0);
 }
 /* optional page styles */

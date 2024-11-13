@@ -15,12 +15,13 @@
     <link rel="stylesheet" media="all" href="../component/styles/input.css" />
     <link rel="stylesheet" media="all" href="../component/styles/dark-mode.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link id="user-theme-stylesheet" rel="stylesheet" href="../component/styles/code/atom-one-dark.min.css">
+    <link id="bot-theme-stylesheet" rel="stylesheet" href="../component/styles/code/atom-one-light.min.css">
 
     <!-- Marked JS -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked-highlight/lib/index.umd.js"></script>
     <!-- highlight.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
 
     <!-- KaTeX CSS -->
@@ -59,19 +60,22 @@
       const sunIcon = document.getElementById('sun-icon');
       const moonIcon = document.getElementById('moon-icon');
 
-      darkModeToggle.addEventListener('click', () => {
+      function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
-        if (document.body.classList.contains('dark-mode')) {
-            sunIcon.style.display = 'block';
-            moonIcon.style.display = 'none';
-        } else {
-            sunIcon.style.display = 'none';
-            moonIcon.style.display = 'block';
-        }
+        const userThemeStylesheet = document.getElementById('user-theme-stylesheet');
+        const botThemeStylesheet = document.getElementById('bot-theme-stylesheet');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+
+        userThemeStylesheet.setAttribute('href', isDarkMode ? '../component/styles/code/atom-one-dark.min.css' : '../component/styles/code/atom-one-light.min.css');
+        botThemeStylesheet.setAttribute('href', isDarkMode ? '../component/styles/code/atom-one-light.min.css' : '../component/styles/code/atom-one-dark.min.css');
+
+        sunIcon.style.display = isDarkMode ? 'block' : 'none';
+        moonIcon.style.display = isDarkMode ? 'none' : 'block';
+      }
+
+      darkModeToggle.addEventListener('click', () => {
+        toggleDarkMode();
       });
-      
-      // initialize by constructing a named function...
-      // ...and add text processing plugin:
 
       function makeid() {
         let result = "";
@@ -93,11 +97,6 @@
         document.getElementById("chat"),
         "chatWindow",
         {
-          // the one that we care about is inputCallbackFn()
-          // this function returns an object with some data that we can process from user input
-          // and understand the context of it
-
-          // this is an example function that matches the text user typed to one of the answer bubbles
           inputCallbackFn: function (chatObject) {
             let found = false;
             if (chatObject.e) {
