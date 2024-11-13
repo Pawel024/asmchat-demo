@@ -1,4 +1,4 @@
-import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
+// import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
 
 // core function
 export default function Bubbles(container, self, options = {}) {
@@ -217,7 +217,7 @@ export default function Bubbles(container, self, options = {}) {
 
   const ensureMarkedLoaded = (callback) => {
     // reimplement emojis when debugging is done
-    if (typeof marked.parse !== 'undefined') {
+    if (typeof marked.marked !== 'undefined') {
       console.log("Marked is loaded!");
       callback();
     } else {
@@ -257,7 +257,7 @@ export default function Bubbles(container, self, options = {}) {
       // marked.use(markedCodePreview)
 
       // setup for emoji support
-      const octokit = new Octokit();
+      /*const octokit = new Octokit();
       // Get all the emojis available to use on GitHub.
       const res = await octokit.rest.emojis.get();
 
@@ -270,9 +270,10 @@ export default function Bubbles(container, self, options = {}) {
 
       // support for emojis
       // marked.use(markedEmoji.markedEmoji(options));
-
+      */
+      
       // parse markdown
-      const parsedContent = marked.parse(say);
+      const parsedContent = marked.marked(say);
 
       console.log("Parsed content:", parsedContent);
 

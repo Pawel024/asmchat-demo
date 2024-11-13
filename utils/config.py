@@ -12,8 +12,8 @@ else:
     llm = OpenAI(model="gpt-4o-mini")
 
 if is_heroku:
-    PERSIST_DIR = "./backend/data"
     input_files = ['backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
+    PERSIST_DIR = "./backend/data"
 else:
     PERSIST_DIR = "../backend/data"
     input_files = ['../backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
