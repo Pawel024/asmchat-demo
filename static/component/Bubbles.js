@@ -259,9 +259,9 @@ export default function Bubbles(container, self, options = {}) {
       // setup for emoji support
       const octokit = new Octokit();
       // Get all the emojis available to use on GitHub.
-      const res = await octokit.rest.emojis.get();
+      /*const res = await octokit.rest.emojis.get();
 
-      /*const emojis = res.data;
+      const emojis = res.data;
 
       const options = {
         emojis,
