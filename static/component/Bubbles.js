@@ -214,6 +214,15 @@ export default function Bubbles(container, self, options = {}) {
     }
   };
 
+  const ensureMarkedLoaded = (callback) => {
+    if (typeof marked.marked !== 'undefined' && typeof markedEmoji !== 'undefined') {
+      callback();
+    } else {
+      console.log("Marked not yet loaded. Retrying...");
+      setTimeout(() => ensureMarkedLoaded(func), 20);
+    }
+  }
+
   // create a bubble
   let bubbleQueue = false;
   const addBubble = (say, posted, reply = "", live = true, iceBreaker = false) => {
@@ -261,17 +270,19 @@ export default function Bubbles(container, self, options = {}) {
       return parsedContent;
     }
 
-    setupMarked().then(parsedContent => {
-      bubbleContent.innerHTML = parsedContent;
-      bubble.appendChild(bubbleContent);
-      bubbleWrap.insertBefore(bubble, bubbleTyping);
-
-      // Ensure KaTeX is loaded and then render LaTeX equations
-      ensureKaTeXLoaded(() => {
-        renderMathInElement(bubbleContent);
+    ensureMarkedLoaded(() => {
+      setupMarked().then(parsedContent => {
+        bubbleContent.innerHTML = parsedContent;
+        bubble.appendChild(bubbleContent);
+        bubbleWrap.insertBefore(bubble, bubbleTyping);
+  
+        // Ensure KaTeX is loaded and then render LaTeX equations
+        ensureKaTeXLoaded(() => {
+          renderMathInElement(bubbleContent);
+        });
+      }).catch(error => {
+        console.error('Error parsing markdown:', error);
       });
-    }).catch(error => {
-      console.error('Error parsing markdown:', error);
     });
 
     // answer picker styles
