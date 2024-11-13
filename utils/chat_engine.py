@@ -47,12 +47,15 @@ def read_data():
         index = parse_pdf(input_files, store=True, persist_dir=persist_dir)
         data_parsed = True
 
+        print("\n")
         list_files_in_directory(persist_dir)
 
         # Upload the parsed data to Azure Blob Storage for future use
         if is_heroku and not data_uploaded:
             upload_parsed_data_to_azure(blob_service_client, container_name, persist_dir)
             data_uploaded = True
+    
+    print("Data setup finished!\n\n")
 
     return index
 

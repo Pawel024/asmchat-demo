@@ -21,7 +21,7 @@ def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         with open(local_path, 'wb') as file:
             file.write(response.content)
-        print(f"Downloading the pdf done!\n")
+        print(f"Downloading the pdf done!\n\n")
     except requests.RequestException as e:
         raise Exception(f"\n\nError downloading file from OneDrive: {e}\n\n")
 
@@ -57,6 +57,6 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
                 with open(file_path, 'rb') as file:
                     blob_client.upload_blob(file, overwrite=True)
                 print(f"File '{file_path}' uploaded as blob '{blob_name}'")
-        print("")
+        print("\n\n")
     except Exception as e:
         raise Exception(f"\n\nError uploading parsed data to Azure: {e}\n\n")
