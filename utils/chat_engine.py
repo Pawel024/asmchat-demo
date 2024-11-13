@@ -67,12 +67,13 @@ def create_chat_engine(index):
         "Here are the relevant documents for the context:\n"
         "{context_str}"
         "\nInstruction: Use the previous chat history, or the context above, to interact and help the user."
-        " Format your responses in markdown. If providing code, do so in the following format:"
-        " ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```"
-        " If If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."
+        " Format your responses in markdown. If providing equations, use $$ as delimiters for block formulas."
+        " For inline equations, use $ written directly (without a whitespace) before and directly after the expression."
+        " If providing code, do so in the following format: ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```."
+        " If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."
         " If a question cannot be answered using the context (the book), say 'Sorry, I can't help with that."
         " Do not answer questions about topics not covered in the book even if you are confident about the answer."
-        " The only exception is if they are general knowledge, e.g. you can answer 'What is the formula for the area of a circle?'"
+        " The only exception is if they could be considered general knowledge, e.g. you can answer 'What is the formula for the area of a circle?'"
         " Never lie. Never be rude."
     ))
     return chat_engine_
