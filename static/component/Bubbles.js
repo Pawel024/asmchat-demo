@@ -1,4 +1,4 @@
-// import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
+import { Octokit } from "https://esm.sh/@octokit/rest"; // get emoji list from octokit
 
 // core function
 export default function Bubbles(container, self, options = {}) {
