@@ -1,21 +1,17 @@
-import threading
 import os
 import logging
 from azure.storage.blob import BlobServiceClient
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
-from utils.config import llm, input_files, PERSIST_DIR, is_heroku
+from utils.config import llm, input_files, persist_dir, is_heroku
 from backend.parse import parse_pdf
-from utils.azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive
+from utils.azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive, list_files_in_directory
 from llama_index.core import Settings
 
 logging.basicConfig(level=logging.INFO)
 
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 Settings.llm = llm
-
-# Create a lock for synchronization
-lock = threading.Lock()
 
 # Flags to check if processes have been completed
 data_downloaded = False
@@ -26,40 +22,43 @@ def read_data():
     """Read the parsed data from Azure Blob Storage or the local directory."""
     global data_downloaded, data_parsed, data_uploaded
 
-    with lock:
-        blob_service_client = None
-        container_name = None
+    blob_service_client = None
+    container_name = None
 
-        # Download the parsed data from Azure Blob Storage if running on Heroku
-        if is_heroku and not data_downloaded:
-            # Ensure PERSIST_DIR exists
-            os.makedirs(PERSIST_DIR, exist_ok=True)
-            blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
-            container_name = os.getenv('AZURE_CONTAINER_NAME')
-            download_parsed_data_from_azure(blob_service_client, container_name, PERSIST_DIR)
-            data_downloaded = True
+    # Download the parsed data from Azure Blob Storage if running on Heroku
+    if is_heroku and not data_downloaded:
+        # Ensure persist_dir exists
+        os.makedirs(persist_dir, exist_ok=True)
+        blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
+        container_name = os.getenv('AZURE_CONTAINER_NAME')
+        download_parsed_data_from_azure(blob_service_client, container_name, persist_dir)
+        data_downloaded = True
 
-        # Check if parsed data already exists
-        if os.path.exists(PERSIST_DIR) and os.listdir(PERSIST_DIR):
-            storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
-            index = load_index_from_storage(storage_context)
-        else:
-            # Download the PDF from OneDrive if running on Heroku
-            if is_heroku and not data_parsed:
-                onedrive_link = os.getenv('ONEDRIVE_LINK')
-                local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
-                download_file_from_onedrive(onedrive_link, local_path)
+    # Check if parsed data already exists
+    if os.path.exists(persist_dir) and os.listdir(persist_dir):
+        storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
+        index = load_index_from_storage(storage_context)
+    else:
+        # Download the PDF from OneDrive if running on Heroku
+        if is_heroku and not data_parsed:
+            onedrive_link = os.getenv('ONEDRIVE_LINK')
+            local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
+            download_file_from_onedrive(onedrive_link, local_path)
 
-            # Parse the PDF and store the parsed data
-            index = parse_pdf(input_files, store=True)
-            data_parsed = True
+        list_files_in_directory(os.path.join(input_files[0], '..'))
 
-            # Upload the parsed data to Azure Blob Storage for future use
-            if is_heroku and not data_uploaded:
-                upload_parsed_data_to_azure(blob_service_client, container_name, PERSIST_DIR)
-                data_uploaded = True
+        # Parse the PDF and store the parsed data
+        index = parse_pdf(input_files, store=True, persist_dir=persist_dir)
+        data_parsed = True
 
-        return index
+        list_files_in_directory(persist_dir)
+
+        # Upload the parsed data to Azure Blob Storage for future use
+        if is_heroku and not data_uploaded:
+            upload_parsed_data_to_azure(blob_service_client, container_name, persist_dir)
+            data_uploaded = True
+
+    return index
 
 def create_chat_engine(index):
     """Create a chat engine using the LlamaIndex chat engine."""
