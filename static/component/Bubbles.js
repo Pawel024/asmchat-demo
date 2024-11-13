@@ -1,3 +1,6 @@
+import { interactionsSave } from './interactionsSaveUtils.js';
+import { addBubble, bubbleQueue } from './addBubbleUtils.js';
+
 // core function
 export default function Bubbles(container, self, options = {}) {
   // options
@@ -36,29 +39,6 @@ export default function Bubbles(container, self, options = {}) {
       JSON.parse(localStorage.getItem(interactionsLS))) ||
     [];
 
-  // prepare next save point
-  const interactionsSave = (say, reply) => {
-    if (!localStorageAvailable) return;
-    // limit number of saves
-    if (interactionsHistory.length > recallInteractions)
-      interactionsHistory.shift(); // removes the oldest (first) save to make space
-
-    // do not memorize buttons; only user input gets memorized:
-    if (
-      // `bubble-button` class name signals that it's a button
-      say.includes("bubble-button") &&
-      // if it is not of a type of textual reply
-      reply !== "reply reply-freeform" &&
-      // if it is not of a type of textual reply or memorized user choice
-      reply !== "reply reply-pick"
-    )
-      // ...it shan't be memorized
-      return;
-
-    // save to memory
-    interactionsHistory.push({ say: say, reply: reply });
-  };
-
   // commit save to localStorage
   const interactionsSaveCommit = () => {
     if (!localStorageAvailable) return;
@@ -93,6 +73,17 @@ export default function Bubbles(container, self, options = {}) {
         addBubble(
           '---input---' + inputText.value,
           () => {},
+          container,
+          this.animationTime,
+          this.typeSpeed,
+          widerBy,
+          sidePadding,
+          bubbleWrap,
+          bubbleTyping,
+          interactionsSave,
+          interactionsSaveCommit,
+          interactionsHistory,
+          localStorageAvailable,
           "reply reply-freeform"
         );
         // Send user input to chatbot engine
@@ -172,9 +163,9 @@ export default function Bubbles(container, self, options = {}) {
       addBubble(turn.says, () => {
         bubbleTyping.classList.remove("imagine");
         questionsHTML !== ""
-          ? addBubble(questionsHTML, () => {}, "reply")
+          ? addBubble(questionsHTML, () => {}, container, this.animationTime, this.typeSpeed, widerBy, sidePadding, bubbleWrap, bubbleTyping, interactionsSave, interactionsSaveCommit, interactionsHistory, localStorageAvailable, "reply")
           : bubbleTyping.classList.add("imagine");
-      });
+      }, container, this.animationTime, this.typeSpeed, widerBy, sidePadding, bubbleWrap, bubbleTyping, interactionsSave, interactionsSaveCommit, interactionsHistory, localStorageAvailable);
     } else {
       console.error("Error: turn.says is not a string", turn.says);
     }
@@ -203,172 +194,22 @@ export default function Bubbles(container, self, options = {}) {
     }
   };
 
-  const ensureKaTeXLoaded = (callback) => {
-    if (typeof renderMathInElement !== 'undefined') {
-      console.log("KaTeX is loaded.");
-      callback();
-    } else {
-      console.log("KaTeX not yet loaded. Retrying...");
-      setTimeout(() => ensureKaTeXLoaded(callback), 20);
-    }
-  };
-
-  const ensureMarkedLoaded = (callback) => {
-    // reimplement emojis when debugging is done
-    if (typeof marked.parse !== 'undefined') {
-      console.log("Marked is loaded!");
-      callback();
-    } else {
-      console.log("Marked not yet loaded. Retrying...");
-      setTimeout(() => ensureMarkedLoaded(callback), 20);
-    }
-  };
-
-  // create a bubble
-  let bubbleQueue = false;
-  const addBubble = (say, posted, reply = "", live = true, iceBreaker = false) => {
-    console.log("addBubble called with say:", say);
-    const animationTime = live ? this.animationTime : 0;
-    const typeSpeed = live ? this.typeSpeed : 0;
-    // create bubble element
-    const bubble = document.createElement("div");
-
-    let isAnInput = say.startsWith('---input---');
-
-    if (isAnInput) {
-      say = say.replace('---input---', '');
-    }
-
-    // Replace \[ with $$ and \] with $$
-    say = say.replace(/\\\[|\\\]/g, function(match) {
-      return match === '\\[' ? '$$' : '$$';
-    });
-
-    // Replace \( with $ and \) with $
-    say = say.replace(/\\\(|\\\)/g, function(match) {
-      return match === '\\(' ? '$' : '$';
-    });
-     
-    console.log("Processed say:", say);
-
-    const bubbleContent = document.createElement("span");
-    bubble.className = "bubble imagine " + (!live ? " history " : "") + reply;
-    bubbleContent.className = "bubble-content";
-
-    const setupMarked = () => {
-      console.log("Setting up marked...");
-      
-      const { Marked } = globalThis.marked;
-      const { markedHighlight } = globalThis.markedHighlight;
-      const newMarked = new Marked(
-        markedHighlight({
-        emptyLangClass: 'hljs',
-          langPrefix: 'hljs language-',
-          highlight(code, lang, info) {
-            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-            return hljs.highlight(code, { language }).value;
-          }
-        })
-      );      
-
-      // parse markdown
-      let parsedContent = newMarked.parse(say);
-
-      if (isAnInput) {
-        parsedContent = '<div class="user-message"><span class="bubble-button bubble-pick">' + parsedContent + "</span></div>";
-      } else {
-        parsedContent = '<div class="bot-message">' + parsedContent + "</div>";
-      }
-
-      console.log("Parsed content:", parsedContent);
-
-      console.log("Setting innerHTML of bubbleContent");
-      bubbleContent.innerHTML = parsedContent;
-      bubble.appendChild(bubbleContent);
-      bubbleWrap.insertBefore(bubble, bubbleTyping);
-
-      // Ensure KaTeX is loaded and then render LaTeX equations
-      ensureKaTeXLoaded(() => {
-        console.log("Rendering math in element.");
-        renderMathInElement(bubbleContent);
-      });
-    }
-
-    ensureMarkedLoaded(setupMarked);
-
-    // answer picker styles
-    if (reply !== "") {
-      const bubbleButtons = bubbleContent.querySelectorAll(".bubble-button");
-      for (let z = 0; z < bubbleButtons.length; z++) {
-        ((el) => {
-          if (!el.parentNode.parentNode.classList.contains("reply-freeform"))
-            el.style.width = el.offsetWidth - sidePadding * 2 + widerBy + "px";
-        })(bubbleButtons[z]);
-      }
-      bubble.addEventListener("click", (e) => {
-        if (e.target.classList.contains('bubble-button')) {
-          for (let i = 0; i < bubbleButtons.length; i++) {
-            ((el) => {
-              el.style.width = 0 + "px";
-              el.classList.contains("bubble-pick") ? (el.style.width = "") : false;
-              el.removeAttribute("onclick");
-            })(bubbleButtons[i]);
-          }
-          this.classList.add("bubble-picked");
-        }
-      });
-    }
-    // time, size & animate
-    let wait = live ? animationTime * 2 : 0;
-    const minTypingWait = live ? animationTime * 6 : 0;
-    if (say.length * typeSpeed > animationTime && reply === "") {
-      wait += typeSpeed * say.length;
-      wait < minTypingWait ? (wait = minTypingWait) : false;
-      setTimeout(() => {
-        bubbleTyping.classList.remove("imagine");
-      }, animationTime);
-    }
-    live && setTimeout(() => {
-      bubbleTyping.classList.add("imagine");
-    }, wait - animationTime * 2);
-    bubbleQueue = setTimeout(() => {
-      bubble.classList.remove("imagine");
-      const bubbleWidthCalc = bubbleContent.offsetWidth + widerBy + "px";
-      bubble.style.width = reply === "" ? bubbleWidthCalc : "";
-      bubble.style.width = say.includes("<img src=")
-        ? "50%"
-        : bubble.style.width;
-      bubble.classList.add("say");
-      posted();
-
-      // save the interaction
-      interactionsSave(say, reply);
-      !iceBreaker && interactionsSaveCommit(); // save point
-
-      // animate scrolling
-      const containerHeight = container.offsetHeight;
-      const scrollDifference = bubbleWrap.scrollHeight - bubbleWrap.scrollTop;
-      const scrollHop = scrollDifference / 200;
-      const scrollBubbles = () => {
-        for (let i = 1; i <= scrollDifference / scrollHop; i++) {
-          (() => {
-            setTimeout(() => {
-              bubbleWrap.scrollHeight - bubbleWrap.scrollTop > containerHeight
-                ? (bubbleWrap.scrollTop = bubbleWrap.scrollTop + scrollHop)
-                : false;
-            }, i * 5);
-          })();
-        }
-      };
-      setTimeout(scrollBubbles, animationTime / 2);
-    }, wait + animationTime * 2);
-  };
-
   // recall previous interactions
   for (let i = 0; i < interactionsHistory.length; i++) {
     addBubble(
       interactionsHistory[i].say,
       () => {},
+      container,
+      this.animationTime,
+      this.typeSpeed,
+      widerBy,
+      sidePadding,
+      bubbleWrap,
+      bubbleTyping,
+      interactionsSave,
+      interactionsSaveCommit,
+      interactionsHistory,
+      localStorageAvailable,
       interactionsHistory[i].reply,
       false,
       this.iceBreaker
