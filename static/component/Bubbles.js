@@ -262,7 +262,7 @@ export default function Bubbles(container, self, options = {}) {
       };
 
       // support for emojis
-      marked.use(markedEmoji.markedEmoji(options));
+      // marked.use(markedEmoji.markedEmoji(options));
 
       // parse markdown
       const parsedContent = marked.parse(say);
