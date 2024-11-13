@@ -215,7 +215,7 @@ export default function Bubbles(container, self, options = {}) {
   };
 
   const ensureMarkedLoaded = (callback) => {
-    if (typeof marked.marked !== 'undefined' && typeof window.markedEmoji === 'function') {
+    if (typeof marked.marked !== 'undefined' && typeof markedEmoji.markedEmoji === 'function') {
       callback();
     } else {
       console.log("Marked not yet loaded. Retrying...");
@@ -262,7 +262,7 @@ export default function Bubbles(container, self, options = {}) {
       };
 
       // support for emojis
-      marked.use(window.markedEmoji(options));
+      marked.use(markedEmoji.markedEmoji(options));
 
       // parse markdown
       const parsedContent = marked.marked(say);
