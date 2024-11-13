@@ -13,7 +13,7 @@ else:
 
 if is_heroku:
     input_files = ['backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
-    PERSIST_DIR = "./backend/data"
+    PERSIST_DIR = "backend/data"
 else:
     PERSIST_DIR = "../backend/data"
     input_files = ['../backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf']
