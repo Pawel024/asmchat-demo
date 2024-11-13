@@ -37,7 +37,7 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
             os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
             with open(local_file_path, 'wb') as file:
                 file.write(blob_client.download_blob().readall())
-            print(f"Blob '{blob.name}' downloaded!'")
+            print(f"Blob '{blob.name}' downloaded")
         print("")
         list_files_in_directory(local_dir)  # List files after download
         print("")
