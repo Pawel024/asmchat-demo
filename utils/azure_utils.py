@@ -3,6 +3,18 @@ import requests
 import logging
 from azure.storage.blob import BlobServiceClient
 
+logging.basicConfig(level=logging.INFO)
+
+def list_files_in_directory(directory: str) -> None:
+    """Log the list of files in the given directory."""
+    if os.path.exists(directory):
+        logging.info(f"Listing files in directory '{directory}':")
+        for root, dirs, files in os.walk(directory):
+            for file_name in files:
+                logging.info(f" - {os.path.join(root, file_name)}")
+    else:
+        logging.info(f"Directory '{directory}' does not exist.")
+
 def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
     """Download a file from OneDrive and save it to the local path."""
     try:
@@ -20,6 +32,7 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
     """Download parsed data from Azure Blob Storage to the local directory."""
     try:
         logging.info(f"Downloading parsed data from Azure Blob Storage container '{container_name}' to '{local_dir}'")
+        list_files_in_directory(local_dir)  # List files before download
         container_client = blob_service_client.get_container_client(container_name)
         blobs = container_client.list_blobs()
         for blob in blobs:
@@ -29,6 +42,7 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
             with open(local_file_path, 'wb') as file:
                 file.write(blob_client.download_blob().readall())
             logging.info(f"Downloaded blob '{blob.name}' to '{local_file_path}'")
+        list_files_in_directory(local_dir)  # List files after download
     except Exception as e:
         logging.error(f"Error downloading parsed data from Azure: {e}")
 
@@ -36,6 +50,7 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
     """Upload parsed data from the local directory to Azure Blob Storage."""
     try:
         logging.info(f"Uploading parsed data from '{local_dir}' to Azure Blob Storage container '{container_name}'")
+        list_files_in_directory(local_dir)  # List files before upload
         container_client = blob_service_client.get_container_client(container_name)
         for root, dirs, files in os.walk(local_dir):
             for file_name in files:
@@ -45,5 +60,6 @@ def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, containe
                 with open(file_path, 'rb') as file:
                     blob_client.upload_blob(file, overwrite=True)
                 logging.info(f"Uploaded file '{file_path}' as blob '{blob_name}'")
+        list_files_in_directory(local_dir)  # List files after upload
     except Exception as e:
         logging.error(f"Error uploading parsed data to Azure: {e}")
