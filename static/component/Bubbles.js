@@ -219,7 +219,7 @@ export default function Bubbles(container, self, options = {}) {
       callback();
     } else {
       console.log("Marked not yet loaded. Retrying...");
-      setTimeout(() => ensureMarkedLoaded(func), 20);
+      setTimeout(() => ensureMarkedLoaded(callback), 20);
     }
   }
 
