@@ -40,9 +40,8 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
             print(f"Blob '{blob.name}' downloaded!'")
         print("")
         list_files_in_directory(local_dir)  # List files after download
-        print("")
     except Exception as e:
-        raise Exception(f"\n\nError downloading parsed data from Azure: {e}\n\n")
+        raise Exception(f"\n\nError downloading parsed data from Azure: {e}\n")
 
 def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
     """Upload parsed data from the local directory to Azure Blob Storage."""
