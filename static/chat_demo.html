@@ -15,8 +15,7 @@
     <link rel="stylesheet" media="all" href="../component/styles/input.css" />
     <link rel="stylesheet" media="all" href="../component/styles/dark-mode.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link id="user-theme-stylesheet" rel="stylesheet" href="../component/styles/code/atom-one-dark.min.css">
-    <link id="bot-theme-stylesheet" rel="stylesheet" href="../component/styles/code/atom-one-light.min.css">
+    <link rel="stylesheet" media="all" href="../component/styles/code/combined.css" />
 
     <!-- Marked JS -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -62,12 +61,7 @@
 
       function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
-        const userThemeStylesheet = document.getElementById('user-theme-stylesheet');
-        const botThemeStylesheet = document.getElementById('bot-theme-stylesheet');
         const isDarkMode = document.body.classList.contains('dark-mode');
-
-        userThemeStylesheet.setAttribute('href', isDarkMode ? '../component/styles/code/atom-one-dark.min.css' : '../component/styles/code/atom-one-light.min.css');
-        botThemeStylesheet.setAttribute('href', isDarkMode ? '../component/styles/code/atom-one-light.min.css' : '../component/styles/code/atom-one-dark.min.css');
 
         sunIcon.style.display = isDarkMode ? 'block' : 'none';
         moonIcon.style.display = isDarkMode ? 'none' : 'block';

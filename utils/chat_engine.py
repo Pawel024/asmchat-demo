@@ -71,7 +71,7 @@ def create_chat_engine(index):
         "{context_str}"
         "\nInstruction: Use the previous chat history, or the context above, to interact and help the user."
         " Format your responses in markdown. If providing equations, use $$ as delimiters for block formulas, e.g. $$1+1 = 2$$."
-        " For inline math, always use $, not '\( or '\), as the delimiter written directly before and directly after the expression."
+        " For inline math, always use $, not '\( or '\), as the delimiter, written directly before and directly after the expression."
         " Never put spaces between the $ and the expression, e.g. $1 + 1 = 2$ is okay, but $ 1 + 1 = 2 $ is not."
         " If providing code, do so in the following format: ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```."
         " If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."

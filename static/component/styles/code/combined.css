@@ -1,0 +1,225 @@
+:root {
+    --hljs-color-user: #abb2bf;
+    --hljs-background-user: rgba(0, 0, 0, 0.1);
+    --hljs-comment-quote-user: #5c6370;
+    --hljs-comment-quote-style-user: italic;
+    --hljs-doctag-formula-keyword-user: #c678dd;
+    --hljs-deletion-name-section-selector-tag-subst-user: #e06c75;
+    --hljs-literal-user: #56b6c2;
+    --hljs-addition-attribute-meta-string-regexp-string-user: #98c379;
+    --hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-user: #d19a66;
+    --hljs-bullet-link-meta-selector-id-symbol-title-user: #61aeee;
+    --hljs-built_in-class-title-title-class_-user: #e6c07b;
+    --hljs-emphasis-style-user: italic;
+    --hljs-strong-weight-user: 700;
+    --hljs-link-decoration-user: underline;
+    --hljs-color-bot: #383a42;
+    --hljs-background-bot: #f3f3f3;
+    --hljs-comment-quote-bot: #a0a1a7;
+    --hljs-comment-quote-style-bot: italic;
+    --hljs-doctag-formula-keyword-bot: #a626a4;
+    --hljs-deletion-name-section-selector-tag-subst-bot: #e45649;
+    --hljs-literal-bot: #0184bb;
+    --hljs-addition-attribute-meta-string-regexp-string-bot: #50a14f;
+    --hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-bot: #986801;
+    --hljs-bullet-link-meta-selector-id-symbol-title-bot: #4078f2;
+    --hljs-built_in-class-title-title-class_-bot: #c18401;
+    --hljs-emphasis-style-bot: italic;
+    --hljs-strong-weight-bot: 700;
+    --hljs-link-decoration-bot: underline;
+}
+  
+.dark-mode {
+    --hljs-color-user: #383a42;
+    --hljs-background-user: #f3f3f3;
+    --hljs-comment-quote-user: #a0a1a7;
+    --hljs-comment-quote-style-user: italic;
+    --hljs-doctag-formula-keyword-user: #a626a4;
+    --hljs-deletion-name-section-selector-tag-subst-user: #e45649;
+    --hljs-literal-user: #0184bb;
+    --hljs-addition-attribute-meta-string-regexp-string-user: #50a14f;
+    --hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-user: #986801;
+    --hljs-bullet-link-meta-selector-id-symbol-title-user: #4078f2;
+    --hljs-built_in-class-title-title-class_-user: #c18401;
+    --hljs-emphasis-style-user: italic;
+    --hljs-strong-weight-user: 700;
+    --hljs-link-decoration-user: underline;
+    --hljs-color-bot: #abb2bf;
+    --hljs-background-bot: rgba(0, 0, 0, 0.1);
+    --hljs-comment-quote-bot: #5c6370;
+    --hljs-comment-quote-style-bot: italic;
+    --hljs-doctag-formula-keyword-bot: #c678dd;
+    --hljs-deletion-name-section-selector-tag-subst-bot: #e06c75;
+    --hljs-literal-bot: #56b6c2;
+    --hljs-addition-attribute-meta-string-regexp-string-bot: #98c379;
+    --hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-bot: #d19a66;
+    --hljs-bullet-link-meta-selector-id-symbol-title-bot: #61aeee;
+    --hljs-built_in-class-title-title-class_-bot: #e6c07b;
+    --hljs-emphasis-style-bot: italic;
+    --hljs-strong-weight-bot: 700;
+    --hljs-link-decoration-bot: underline;
+}
+
+.user-message pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+    color: var(--hljs-color-user);
+    background: var(--hljs-background-user);
+}
+  
+.user-message code.hljs {
+    padding: 3px 5px;
+}
+
+.user-message .hljs-comment,
+.user-message .hljs-quote {
+    color: var(--hljs-comment-quote-user);
+    font-style: var(--hljs-comment-quote-style-user);
+}
+  
+.user-message .hljs-doctag,
+.user-message .hljs-formula,
+.user-message .hljs-keyword {
+    color: var(--hljs-doctag-formula-keyword-user);
+}
+  
+.user-message .hljs-deletion,
+.user-message .hljs-name,
+.user-message .hljs-section,
+.user-message .hljs-selector-tag,
+.user-message .hljs-subst {
+    color: var(--hljs-deletion-name-section-selector-tag-subst-user);
+}
+  
+.user-message .hljs-literal {
+    color: var(--hljs-literal-user);
+}
+  
+.user-message .hljs-addition,
+.user-message .hljs-attribute,
+.user-message .hljs-meta .hljs-string,
+.user-message .hljs-regexp,
+.user-message .hljs-string {
+    color: var(--hljs-addition-attribute-meta-string-regexp-string-user);
+}
+  
+.user-message .hljs-attr,
+.user-message .hljs-number,
+.user-message .hljs-selector-attr,
+.user-message .hljs-selector-class,
+.user-message .hljs-selector-pseudo,
+.user-message .hljs-template-variable,
+.user-message .hljs-type,
+.user-message .hljs-variable {
+    color: var(--hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-user);
+}
+  
+.user-message .hljs-bullet,
+.user-message .hljs-link,
+.user-message .hljs-meta,
+.user-message .hljs-selector-id,
+.user-message .hljs-symbol,
+.user-message .hljs-title {
+    color: var(--hljs-bullet-link-meta-selector-id-symbol-title-user);
+}
+  
+.user-message .hljs-built_in,
+.user-message .hljs-class .hljs-title,
+.user-message .hljs-title.class_ {
+    color: var(--hljs-built_in-class-title-title-class_-user);
+}
+  
+.user-message .hljs-emphasis {
+    font-style: var(--hljs-emphasis-style-user);
+}
+  
+.user-message .hljs-strong {
+    font-weight: var(--hljs-strong-weight-user);
+}
+  
+.user-message .hljs-link {
+    text-decoration: var(--hljs-link-decoration-user);
+}
+
+.bot-message pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+    color: var(--hljs-color-bot);
+    background: var(--hljs-background-bot);
+}
+  
+.bot-message code.hljs {
+    padding: 3px 5px;
+}
+
+.bot-message .hljs-comment,
+.bot-message .hljs-quote {
+    color: var(--hljs-comment-quote-bot);
+    font-style: var(--hljs-comment-quote-style-bot);
+}
+  
+.bot-message .hljs-doctag,
+.bot-message .hljs-formula,
+.bot-message .hljs-keyword {
+    color: var(--hljs-doctag-formula-keyword-bot);
+}
+  
+.bot-message .hljs-deletion,
+.bot-message .hljs-name,
+.bot-message .hljs-section,
+.bot-message .hljs-selector-tag,
+.bot-message .hljs-subst {
+    color: var(--hljs-deletion-name-section-selector-tag-subst-bot);
+}
+  
+.bot-message .hljs-literal {
+    color: var(--hljs-literal-bot);
+}
+  
+.bot-message .hljs-addition,
+.bot-message .hljs-attribute,
+.bot-message .hljs-meta .hljs-string,
+.bot-message .hljs-regexp,
+.bot-message .hljs-string {
+    color: var(--hljs-addition-attribute-meta-string-regexp-string-bot);
+}
+  
+.bot-message .hljs-attr,
+.bot-message .hljs-number,
+.bot-message .hljs-selector-attr,
+.bot-message .hljs-selector-class,
+.bot-message .hljs-selector-pseudo,
+.bot-message .hljs-template-variable,
+.bot-message .hljs-type,
+.bot-message .hljs-variable {
+    color: var(--hljs-attr-number-selector-attr-selector-class-selector-pseudo-template-variable-type-variable-bot);
+}
+  
+.bot-message .hljs-bullet,
+.bot-message .hljs-link,
+.bot-message .hljs-meta,
+.bot-message .hljs-selector-id,
+.bot-message .hljs-symbol,
+.bot-message .hljs-title {
+    color: var(--hljs-bullet-link-meta-selector-id-symbol-title-bot);
+}
+  
+.bot-message .hljs-built_in,
+.bot-message .hljs-class .hljs-title,
+.bot-message .hljs-title.class_ {
+    color: var(--hljs-built_in-class-title-title-class_-bot);
+}
+  
+.bot-message .hljs-emphasis {
+    font-style: var(--hljs-emphasis-style-bot);
+}
+  
+.bot-message .hljs-strong {
+    font-weight: var(--hljs-strong-weight-bot);
+}
+  
+.bot-message .hljs-link {
+    text-decoration: var(--hljs-link-decoration-bot);
+}
