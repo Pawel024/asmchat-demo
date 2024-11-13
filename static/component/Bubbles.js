@@ -78,7 +78,7 @@ export default function Bubbles(container, self, options = {}) {
     const inputWrap = document.createElement("div");
     inputWrap.className = "input-wrap";
     const inputText = document.createElement("textarea");
-    inputText.setAttribute("placeholder", "Ask me anything about aircraft performance or aerodynamics...");
+    inputText.setAttribute("placeholder", "Ask me anything about aerospace structures and materials...");
     inputWrap.appendChild(inputText);
     const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
     inputText.addEventListener("keypress", (e) => {
@@ -216,11 +216,12 @@ export default function Bubbles(container, self, options = {}) {
   };
 
   const ensureMarkedLoaded = (callback) => {
-    if (typeof marked.parse !== 'undefined' && typeof markedEmoji.markedEmoji === 'function') {
-      console.log("Marked and markedEmoji are loaded.");
+    // reimplement emojis when debugging is done
+    if (typeof marked.parse !== 'undefined') {
+      console.log("Marked is loaded!");
       callback();
     } else {
-      console.log("Marked or markedEmoji not yet loaded. Retrying...");
+      console.log("Marked not yet loaded. Retrying...");
       setTimeout(() => ensureMarkedLoaded(callback), 20);
     }
   };
@@ -280,7 +281,7 @@ export default function Bubbles(container, self, options = {}) {
 
     ensureMarkedLoaded(() => {
       setupMarked().then(parsedContent => {
-        console.log("Setting innerHTML of bubbleContent.");
+        console.log("Setting innerHTML of bubbleContent");
         bubbleContent.innerHTML = parsedContent;
         bubble.appendChild(bubbleContent);
         bubbleWrap.insertBefore(bubble, bubbleTyping);
