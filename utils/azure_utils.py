@@ -28,7 +28,7 @@ def download_file_from_onedrive(onedrive_link: str, local_path: str) -> None:
 def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
     """Download parsed data from Azure Blob Storage to the local directory."""
     try:
-        print(f"\n\nDownloading parsed data from Azure container '{container_name}' to '{local_dir}'\n")
+        print(f"\n\nDownloading parsed data from Azure container '{container_name}' to '{local_dir}':\n")
         container_client = blob_service_client.get_container_client(container_name)
         blobs = container_client.list_blobs()
         for blob in blobs:
@@ -47,7 +47,7 @@ def download_parsed_data_from_azure(blob_service_client: BlobServiceClient, cont
 def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
     """Upload parsed data from the local directory to Azure Blob Storage."""
     try:
-        print(f"\n\nUploading parsed data from '{local_dir}' to Azure container '{container_name}'\n")
+        print(f"\n\nUploading parsed data from '{local_dir}' to Azure container '{container_name}:'\n")
         list_files_in_directory(local_dir)  # List files before upload
         container_client = blob_service_client.get_container_client(container_name)
         for root, dirs, files in os.walk(local_dir):
