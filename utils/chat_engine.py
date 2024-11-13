@@ -1,5 +1,4 @@
 import os
-import logging
 from azure.storage.blob import BlobServiceClient
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
@@ -7,8 +6,6 @@ from utils.config import llm, input_files, persist_dir, is_heroku
 from backend.parse import parse_pdf
 from utils.azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive, list_files_in_directory
 from llama_index.core import Settings
-
-logging.basicConfig(level=logging.INFO)
 
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
 Settings.llm = llm
@@ -44,8 +41,6 @@ def read_data():
             onedrive_link = os.getenv('ONEDRIVE_LINK')
             local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
             download_file_from_onedrive(onedrive_link, local_path)
-
-        list_files_in_directory(os.path.join(input_files[0], '..'))
 
         # Parse the PDF and store the parsed data
         index = parse_pdf(input_files, store=True, persist_dir=persist_dir)
