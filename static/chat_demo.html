@@ -109,9 +109,12 @@
         }
       );
 
+      // Embed the environment variable into the script
+      const topic = "${process.env.SPECIALIZATION_TOPIC || 'aerospace structures and materials'}";
+
       const convo = {
         ice: {
-          says: "Hi! I'm ASM Chat, here to answer your questions about aerospace structures and materials. I'm just a silly little demo so don't expect too much 😅",
+          says: `Hi! I'm ASM Chat, here to answer your questions about ${topic}. I'm just a silly little demo so don't expect too much 😅`,
         },
       };
 

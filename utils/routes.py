@@ -1,8 +1,11 @@
+import os
 from flask import jsonify, request, send_from_directory, Response
 from utils.auth import requires_auth
 from utils.chat_engine import read_data, create_chat_engine
 
-chat_engine = create_chat_engine(read_data())
+topic = os.getenv('SPECIALIZATION_TOPIC')
+
+chat_engine = create_chat_engine(read_data(), topic=topic)
 
 def init_routes(app):
     @app.route('/')

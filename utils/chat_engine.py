@@ -39,8 +39,6 @@ def read_data():
     else:
         # Download the PDF from OneDrive if running on Heroku
         if is_heroku and not data_parsed:
-            onedrive_link = os.getenv('ONEDRIVE_LINK')
-            local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
             container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
             download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
@@ -60,19 +58,19 @@ def read_data():
 
     return index
 
-def create_chat_engine(index):
+def create_chat_engine(index, topic="aerospace structures and materials"):
     """Create a chat engine using the LlamaIndex chat engine."""
     # make a chat engine
     chat_engine_ = index.as_chat_engine(chat_mode="condense_plus_context",
                                        memory=memory,
                                        context_prompt=(
         "You are ASM Chatbot, a helpful studying assistant able to have normal interactions,"
-        " as well as explain concepts in aerospace structures and materials. " 
+        f" as well as explain concepts in {topic}. " 
         "Here are the relevant documents for the context:\n"
         "{context_str}"
         "\nInstruction: Use the previous chat history, or the context above, to interact and help the user."
         " Format your responses in markdown. If providing equations, use $$ as delimiters for block formulas, e.g. $$1+1 = 2$$."
-        " For inline math, always use $, not '\( or '\), as the delimiter, written directly before and directly after the expression."
+        " For inline math, always use $ as the delimiter, written directly before and directly after the expression."
         " Never put spaces between the $ and the expression, e.g. $1 + 1 = 2$ is okay, but $ 1 + 1 = 2 $ is not."
         " If providing code, do so in the following format: ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```."
         " If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."
