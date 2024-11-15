@@ -22,10 +22,10 @@ else:
         result_type=ResultType.MD,  # "markdown" and "text" are available
     )
 
-def parse_pdf(input_files, store=False, persist_dir='./data'):
+def parse_pdf(input_dir, store=False, persist_dir='./data'):
     # use SimpleDirectoryReader to parse our file
     file_extractor = {".pdf": parser}
-    documents = SimpleDirectoryReader(input_files=input_files, file_extractor=file_extractor).load_data()
+    documents = SimpleDirectoryReader(input_dir=input_dir, file_extractor=file_extractor).load_data()
 
     index = VectorStoreIndex.from_documents(documents)
 

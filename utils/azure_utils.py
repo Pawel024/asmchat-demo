@@ -31,8 +31,6 @@ def download_files_from_azure(blob_service_client: BlobServiceClient, container_
     except Exception as e:
         raise Exception(f"\n\nError downloading files from Azure: {e}\n")
 
-    return [os.path.join(local_dir, blob.name) for blob in blobs]
-
 def upload_parsed_data_to_azure(blob_service_client: BlobServiceClient, container_name: str, local_dir: str) -> None:
     """Upload parsed data from the local directory to Azure Blob Storage."""
     try:

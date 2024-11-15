@@ -2,7 +2,7 @@ import os
 from azure.storage.blob import BlobServiceClient
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
-from utils.config import llm, parsed_dir, unparsed_dir, is_heroku, input_files
+from utils.config import llm, parsed_dir, unparsed_dir, is_heroku
 from backend.parse import parse_pdf
 from utils.azure_utils import download_files_from_azure, upload_parsed_data_to_azure, list_files_in_directory
 from llama_index.core import Settings
@@ -28,7 +28,7 @@ def read_data():
         os.makedirs(parsed_dir, exist_ok=True)
         blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
         container_name = os.getenv('PARSED_AZURE_CONTAINER_NAME')
-        _ = download_files_from_azure(blob_service_client, container_name, parsed_dir)
+        download_files_from_azure(blob_service_client, container_name, parsed_dir)
         data_downloaded = True
 
     # Check if parsed data already exists
@@ -42,11 +42,10 @@ def read_data():
             onedrive_link = os.getenv('ONEDRIVE_LINK')
             local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
             container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
-            input_files = download_files_from_azure(blob_service_client, container_name, unparsed_dir)
-            print(f"\ninput_files: {input_files}\n")
+            download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
         # Parse the PDF and store the parsed data
-        index = parse_pdf(input_files, store=True, persist_dir=parsed_dir)
+        index = parse_pdf(unparsed_dir, store=True, persist_dir=parsed_dir)
         data_parsed = True
 
         print("\n")
