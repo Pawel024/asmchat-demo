@@ -43,7 +43,7 @@ def read_data():
             local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
             container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
             input_files = download_files_from_azure(blob_service_client, container_name, unparsed_dir)
-            print("\ninput_files: {input_files}\n")
+            print(f"\ninput_files: {input_files}\n")
 
         # Parse the PDF and store the parsed data
         index = parse_pdf(input_files, store=True, persist_dir=parsed_dir)
