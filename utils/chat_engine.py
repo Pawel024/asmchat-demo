@@ -27,7 +27,7 @@ def read_data():
         # Ensure parsed_dir exists
         os.makedirs(parsed_dir, exist_ok=True)
         blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
-        container_name = os.getenv('PARSED_AZURE_CONTAINER_NAME')
+        parsed_container_name = os.getenv('PARSED_AZURE_CONTAINER_NAME')
         download_files_from_azure(blob_service_client, container_name, parsed_dir)
         data_downloaded = True
 
@@ -39,7 +39,7 @@ def read_data():
     else:
         # Download the PDF from OneDrive if running on Heroku
         if is_heroku and not data_parsed:
-            container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
+            unparsed_container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
             download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
         # Parse the PDF and store the parsed data
@@ -51,7 +51,7 @@ def read_data():
 
         # Upload the parsed data to Azure Blob Storage for future use
         if is_heroku and not data_uploaded:
-            upload_parsed_data_to_azure(blob_service_client, container_name, parsed_dir)
+            upload_parsed_data_to_azure(blob_service_client, parsed_container_name, parsed_dir)
             data_uploaded = True
     
     print("--- Data setup finished! ---\n\n")
