@@ -14,6 +14,9 @@ else:
 if is_heroku:
     parsed_dir = "backend/data"
     unparsed_dir = "backend/data_unparsed"
+    input_files = [f"{unparsed_dir}/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf"]
+
 else:
     parsed_dir = "../backend/data"
     unparsed_dir = "../backend/data_unparsed"
+    input_files = [f"{unparsed_dir}/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf"]
