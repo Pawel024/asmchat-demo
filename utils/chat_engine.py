@@ -2,9 +2,9 @@ import os
 from azure.storage.blob import BlobServiceClient
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
-from utils.config import llm, input_files, persist_dir, is_heroku
+from utils.config import llm, parsed_dir, unparsed_dir, is_heroku
 from backend.parse import parse_pdf
-from utils.azure_utils import download_parsed_data_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive, list_files_in_directory
+from utils.azure_utils import download_files_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive, list_files_in_directory
 from llama_index.core import Settings
 
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
@@ -24,16 +24,16 @@ def read_data():
 
     # Download the parsed data from Azure Blob Storage if running on Heroku
     if is_heroku and not data_downloaded:
-        # Ensure persist_dir exists
-        os.makedirs(persist_dir, exist_ok=True)
+        # Ensure parsed_dir exists
+        os.makedirs(parsed_dir, exist_ok=True)
         blob_service_client = BlobServiceClient.from_connection_string(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
-        container_name = os.getenv('AZURE_CONTAINER_NAME')
-        download_parsed_data_from_azure(blob_service_client, container_name, persist_dir)
+        container_name = os.getenv('PARSED_AZURE_CONTAINER_NAME')
+        _ = download_files_from_azure(blob_service_client, container_name, parsed_dir)
         data_downloaded = True
 
     # Check if parsed data already exists
-    if os.path.exists(persist_dir) and os.listdir(persist_dir):
-        storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
+    if os.path.exists(parsed_dir) and os.listdir(parsed_dir):
+        storage_context = StorageContext.from_defaults(parsed_dir=parsed_dir)
         index = load_index_from_storage(storage_context)
         print("\nFound parsed data, skipping parsing!\n\n")
     else:
@@ -41,18 +41,19 @@ def read_data():
         if is_heroku and not data_parsed:
             onedrive_link = os.getenv('ONEDRIVE_LINK')
             local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
-            download_file_from_onedrive(onedrive_link, local_path)
+            container_name = os.getenv('UPARSED_AZURE_CONTAINER_NAME')
+            input_files = download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
         # Parse the PDF and store the parsed data
-        index = parse_pdf(input_files, store=True, persist_dir=persist_dir)
+        index = parse_pdf(input_files, store=True, parsed_dir=parsed_dir)
         data_parsed = True
 
         print("\n")
-        list_files_in_directory(persist_dir)
+        list_files_in_directory(parsed_dir)
 
         # Upload the parsed data to Azure Blob Storage for future use
         if is_heroku and not data_uploaded:
-            upload_parsed_data_to_azure(blob_service_client, container_name, persist_dir)
+            upload_parsed_data_to_azure(blob_service_client, container_name, parsed_dir)
             data_uploaded = True
     
     print("--- Data setup finished! ---\n\n")
