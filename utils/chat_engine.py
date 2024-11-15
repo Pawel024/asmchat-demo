@@ -4,7 +4,7 @@ from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.memory import ChatMemoryBuffer
 from utils.config import llm, parsed_dir, unparsed_dir, is_heroku
 from backend.parse import parse_pdf
-from utils.azure_utils import download_files_from_azure, upload_parsed_data_to_azure, download_file_from_onedrive, list_files_in_directory
+from utils.azure_utils import download_files_from_azure, upload_parsed_data_to_azure, list_files_in_directory
 from llama_index.core import Settings
 
 memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
