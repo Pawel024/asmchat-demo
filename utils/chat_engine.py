@@ -41,7 +41,7 @@ def read_data():
         if is_heroku and not data_parsed:
             onedrive_link = os.getenv('ONEDRIVE_LINK')
             local_path = 'backend/data_unparsed/Alderliesten+-+Introduction+to+Aerospace+Structures+and+Materials.pdf'
-            container_name = os.getenv('UPARSED_AZURE_CONTAINER_NAME')
+            container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
             input_files = download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
         # Parse the PDF and store the parsed data
