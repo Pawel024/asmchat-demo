@@ -33,7 +33,7 @@ def read_data():
 
     # Check if parsed data already exists
     if os.path.exists(parsed_dir) and os.listdir(parsed_dir):
-        storage_context = StorageContext.from_defaults(parsed_dir=parsed_dir)
+        storage_context = StorageContext.from_defaults(persist_dir=parsed_dir)
         index = load_index_from_storage(storage_context)
         print("\nFound parsed data, skipping parsing!\n\n")
     else:
@@ -45,7 +45,7 @@ def read_data():
             input_files = download_files_from_azure(blob_service_client, container_name, unparsed_dir)
 
         # Parse the PDF and store the parsed data
-        index = parse_pdf(input_files, store=True, parsed_dir=parsed_dir)
+        index = parse_pdf(input_files, store=True, persist_dir=parsed_dir)
         data_parsed = True
 
         print("\n")
