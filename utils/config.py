@@ -1,5 +1,8 @@
 import os
 from llama_index.llms.openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Check if running on Heroku
 is_heroku = os.getenv('DYNO') is not None
@@ -16,5 +19,9 @@ if is_heroku:
     unparsed_dir = "backend/data_unparsed"
 
 else:
-    parsed_dir = "../backend/data"
-    unparsed_dir = "../backend/data_unparsed"
+    if os.getenv('FLASK_RUN_FROM_CLI') == 'true':
+        parsed_dir = "backend/data"
+        unparsed_dir = "backend/data_unparsed"
+    else:
+        parsed_dir = "data"
+        unparsed_dir = "data_unparsed"

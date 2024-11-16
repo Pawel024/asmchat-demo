@@ -7,3 +7,4 @@ python-dotenv
 requests
 Flask-Login
 azure-storage-blob
+python-dotenv
