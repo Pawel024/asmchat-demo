@@ -1,9 +1,9 @@
 import os
-from flask import jsonify, request, send_from_directory, Response
+from flask import jsonify, request, render_template, Response
 from utils.auth import requires_auth
 from utils.chat_engine import read_data, create_chat_engine
 
-topic = os.getenv('SPECIALIZATION_TOPIC')
+topic = os.getenv('SPECIALIZATION_TOPIC', 'aerospace structures and materials')
 
 chat_engine = create_chat_engine(read_data(), topic=topic)
 
@@ -12,7 +12,7 @@ def init_routes(app):
     @requires_auth
     def serve_html() -> Response:
         """Serve the chat demo HTML file."""
-        return send_from_directory(app.static_folder, 'chat_demo.html')
+        return render_template('chat_demo_template.html', topic=topic)
 
     @app.route('/chat', methods=['POST'])
     @requires_auth

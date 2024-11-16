@@ -40,6 +40,9 @@
         margin: 0;
         width: calc(100% - 30px);
       }
+      .katex {
+        font-size: 1em !important;
+      }
     </style>
   </head>
 
@@ -87,6 +90,9 @@
       //A unique client id so that the data doesn't get mismatched
       const client_id = makeid();
 
+      // Embed the environment variable into the script
+      const topic = "{{ topic }}";
+
       const chatWindow = new Bubbles(
         document.getElementById("chat"),
         "chatWindow",
@@ -108,9 +114,6 @@
           },
         }
       );
-
-      // Embed the environment variable into the script
-      const topic = "${process.env.SPECIALIZATION_TOPIC || 'aerospace structures and materials'}";
 
       const convo = {
         ice: {

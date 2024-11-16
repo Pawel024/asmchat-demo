@@ -72,6 +72,7 @@ def create_chat_engine(index, topic="aerospace structures and materials"):
         " Format your responses in markdown. If providing equations, use $$ as delimiters for block formulas, e.g. $$1+1 = 2$$."
         " For inline math, always use $ as the delimiter, written directly before and directly after the expression."
         " Never put spaces between the $ and the expression, e.g. $1 + 1 = 2$ is okay, but $ 1 + 1 = 2 $ is not."
+        " If an equation might be longer than a short sentence of about 65 characters, always split it into smaller parts."
         " If providing code, do so in the following format: ```<name of language>\n<your code here>\n```, e.g. ```python\nprint('Hello, World!')\n```."
         " If you can't provide an absolutely confident answer, say 'Sorry, I don't know that' instead."
         " If a question cannot be answered using the context (the book), say 'Sorry, I can't help with that."

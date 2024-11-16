@@ -73,7 +73,8 @@ const addBubble = (say, posted, container, animTime, tSpeed, widerBy, sidePaddin
             {left: "$", right: "$", display: false},
             {left: "\\[", right: "\\]", display: true},
             {left: "\\(", right: "\\)", display: false}
-          ]
+          ],
+          throwOnError: false
         });
       });
     }
