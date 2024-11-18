@@ -8,5 +8,7 @@ requests
 Flask-Login
 azure-storage-blob
 python-dotenv
-arize-phoenix-otel
 openinference-instrumentation-llama_index
+openinference-semantic-conventions
+opentelemetry-sdk
+opentelemetry-exporter-otlp
