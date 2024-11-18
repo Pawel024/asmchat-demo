@@ -37,7 +37,7 @@ def read_data():
         index = load_index_from_storage(storage_context)
         print("\nFound parsed data, skipping parsing!\n\n")
     else:
-        # Download the PDF from OneDrive if running on Heroku
+        # Download the PDF from Azure if running on Heroku
         if is_heroku and not data_parsed:
             unparsed_container_name = os.getenv('UNPARSED_AZURE_CONTAINER_NAME')
             download_files_from_azure(blob_service_client, unparsed_container_name, unparsed_dir)

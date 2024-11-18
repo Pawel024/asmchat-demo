@@ -5,9 +5,9 @@ from utils.chat_engine import read_data, create_chat_engine
 
 topic = os.getenv('SPECIALIZATION_TOPIC', 'aerospace structures and materials')
 
-chat_engine = create_chat_engine(read_data(), topic=topic)
-
 def init_routes(app):
+    chat_engine = create_chat_engine(read_data(), topic=topic)
+
     @app.route('/')
     @requires_auth
     def serve_html() -> Response:

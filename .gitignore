@@ -1,6 +1,8 @@
-# Ignore tunneling tool
-/ngrok
 *.pdf
 *.json
 *.pyc
 .env
+*.log
+/backend/wandb
+/__pycache__
+/backend/__pycache__
