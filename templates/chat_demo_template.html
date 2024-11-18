@@ -29,6 +29,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 
+    <!-- Include React and ReactDOM from CDN -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <!-- Include Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
       body {
         background: #dcdde0;
@@ -43,6 +49,11 @@
       .katex {
         font-size: 1em !important;
       }
+      .flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
     </style>
   </head>
 
@@ -54,6 +65,46 @@
       <i id="sun-icon" class="material-icons-outlined" style="display: none; font-size: 32px;">wb_sunny</i>
       <i id="moon-icon" class="material-icons-outlined" style="font-size: 32px;">nightlight_round</i>
     </button>
+
+    <!-- container element for SwitchDemo component -->
+    <div id="switch-demo"></div>
+
+    <script type="text/babel">
+      const { useState } = React;
+
+      function Switch({ id }) {
+        const [checked, setChecked] = useState(false);
+
+        return (
+          <input
+            type="checkbox"
+            id={id}
+            checked={checked}
+            onChange={() => setChecked(!checked)}
+            style={{ width: '40px', height: '20px' }}
+          />
+        );
+      }
+
+      function Label({ htmlFor, children }) {
+        return (
+          <label htmlFor={htmlFor} style={{ marginLeft: '8px' }}>
+            {children}
+          </label>
+        );
+      }
+
+      function SwitchDemo() {
+        return (
+          <div className="flex items-center space-x-2">
+            <Switch id="airplane-mode" />
+            <Label htmlFor="airplane-mode">Airplane Mode</Label>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<SwitchDemo />, document.getElementById('switch-demo'));
+    </script>
 
     <script type="module">
       import Bubbles from '../component/Bubbles.js';
