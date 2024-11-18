@@ -4,6 +4,7 @@ from utils.routes import init_routes
 import os
 from phoenix.otel import register
 from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
+from openinference.instrumentation.openai import OpenAIInstrumentor
 
 tracer_provider = register(
   project_name="default",
@@ -11,6 +12,7 @@ tracer_provider = register(
 )
 
 LlamaIndexInstrumentor().instrument(tracer_provider=tracer_provider)
+OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
 
 app = Flask(__name__, static_folder='./static', static_url_path='/')
 CORS(app)

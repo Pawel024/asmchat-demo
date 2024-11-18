@@ -10,3 +10,4 @@ azure-storage-blob
 python-dotenv
 arize-phoenix-otel
 openinference-instrumentation-llama_index
+openinference-instrumentation-openai
