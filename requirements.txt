@@ -9,4 +9,3 @@ Flask-Login==0.6.3
 azure-storage-blob==12.23.1
 arize-phoenix-otel==0.6.1
 openinference-instrumentation-llama_index==3.0.4
-openinference-instrumentation-openai==0.1.17
