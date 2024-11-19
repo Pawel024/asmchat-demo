@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'asm-chat'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_81AC36B0A15E4488A555B310F8D6B2DB }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D7469BFA61514004915625AD003917F8 }}
